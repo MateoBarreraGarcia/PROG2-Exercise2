@@ -14,6 +14,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.TextField;
 
+import java.io.IOException;
 import java.net.URL;
 import java.util.Comparator;
 import java.util.List;
@@ -129,11 +130,24 @@ public class HomeController implements Initializable {
         observableMovies.addAll(filteredMovies);
     }
 
+    public void applyAllFilters(String searchQuery, Object genre, int year, double rating) { // overloaded method intended for API call
+        MovieAPI movieAPI = new MovieAPI();
+
+        String url = movieAPI.generateRequestString(searchQuery, genre, year, rating);
+
+        try {
+            movieAPI.getRequest(url);
+            // TODO update the ui with the list returned from the request
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     public void searchBtnClicked(ActionEvent actionEvent) {
         String searchQuery = searchField.getText().trim().toLowerCase();
         Object genre = genreComboBox.getSelectionModel().getSelectedItem();
 
-        applyAllFilters(searchQuery, genre);
+        applyAllFilters(searchQuery, genre, 0, 0);
         sortMovies(sortedState);
     }
 
