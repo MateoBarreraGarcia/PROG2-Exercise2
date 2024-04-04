@@ -110,7 +110,7 @@ public class Movie {
         movies.add(new Movie(
                 "Incendies",
                 "Twins journey to the Middle East to discover their family history and fulfill their mother's last wishes.",
-                Arrays.asList(Genre.DRAMA, Genre.MYSTERY, Genre.WAR)));
+                Arrays.asList(Genre.DRAMA, Genre.MYSTERY, Genre.WAR))); //movies
 
         return movies;
     }
