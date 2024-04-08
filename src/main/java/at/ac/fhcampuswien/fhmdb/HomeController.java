@@ -13,6 +13,9 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.TextField;
+import java.util.Map;
+import java.util.function.Function;
+//import java.stream.Collectors;
 
 import java.io.IOException;
 import java.net.URL;
@@ -20,6 +23,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 import java.util.ResourceBundle;
+
 
 public class HomeController implements Initializable {
     @FXML
@@ -154,4 +158,19 @@ public class HomeController implements Initializable {
     public void sortBtnClicked(ActionEvent actionEvent) {
         sortMovies();
     }
+
+    //Streams:
+    public int getLongestMovieTitle (List<Movie> movies){
+        return movies.stream()
+                .mapToInt(movie ->movie.getTitle().length())
+                .max()
+                .orElse(0);
+    }
+
+    public long countMoviesFrom(List<Movie> movies, String director){
+        return movies.stream()
+                .filter(movie -> movie.getDirectors().equals(director))
+                .count();
+    }
+
 }
