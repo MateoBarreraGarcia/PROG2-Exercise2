@@ -13,8 +13,6 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.TextField;
-import java.util.Map;
-import java.util.function.Function;
 //import java.stream.Collectors;
 
 import java.io.IOException;
@@ -23,7 +21,6 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 import java.util.ResourceBundle;
-import java.util.stream.Collectors;
 
 public class HomeController implements Initializable {
     @FXML
@@ -134,14 +131,17 @@ public class HomeController implements Initializable {
         observableMovies.addAll(filteredMovies);
     }
 
-    public void applyAllFilters(String searchQuery, Object genre, int year, double rating) { // overloaded method intended for API call
+    public void searchAPIForMovies(String searchQuery, Object genre, int year, double rating) {
+
         MovieAPI movieAPI = new MovieAPI();
 
         String url = movieAPI.generateRequestString(searchQuery, genre, year, rating);
 
         try {
-            movieAPI.getRequest(url);
-            // TODO update the ui with the list returned from the request
+            List<Movie> filteredMovies = movieAPI.getRequest(url);
+            // update the ui with the list returned from the request
+            observableMovies.clear();
+            observableMovies.addAll(filteredMovies);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -151,7 +151,7 @@ public class HomeController implements Initializable {
         String searchQuery = searchField.getText().trim().toLowerCase();
         Object genre = genreComboBox.getSelectionModel().getSelectedItem();
 
-        applyAllFilters(searchQuery, genre, 0, 0);
+        searchAPIForMovies(searchQuery, genre, 0, 0);
         sortMovies(sortedState);
     }
 

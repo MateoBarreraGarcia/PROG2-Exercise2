@@ -19,7 +19,7 @@ import java.util.List;
 public class MovieAPI {
     OkHttpClient client = new OkHttpClient();
 
-    public List<Movie> getRequest(String url) throws IOException { // TODO this should return a List<Movie> once the parsing was added
+    public List<Movie> getRequest(String url) throws IOException {
         Request request = new Request.Builder()
                 .addHeader("User-Agent", "User-Agent")
                 .url(url)
@@ -28,47 +28,47 @@ public class MovieAPI {
         Response response = client.newCall(request).execute();
         System.out.println(response.code());
 
-        List<Movie> movies=new ArrayList<>(); //A
+        List<Movie> movies = new ArrayList<>(); //A
 
         if (response.code() == 200) {
-            // TODO after a successful request parse the JSON into movie objects
-            try{
-                String jsonData= response.body().string();
-                JSONArray jsonArray= new JSONArray (jsonData);
+            // the request was successful and is parsed into objects
+            try {
+                String jsonData = response.body().string();
+                JSONArray jsonArray = new JSONArray(jsonData);
 
-                for (int i=0; i<jsonArray.length(); i++){
+                for (int i = 0; i < jsonArray.length(); i++) {
                     JSONObject jsonObject = jsonArray.getJSONObject(i);
-                    String title = jsonObject.getString ("title");
-                    String description = jsonObject.getString ("description");
-                    JSONArray genresArray = jsonObject.getJSONArray ("genres");
+                    String title = jsonObject.getString("title");
+                    String description = jsonObject.getString("description");
+                    JSONArray genresArray = jsonObject.getJSONArray("genres");
                     String id = jsonObject.getString("id");
                     int releaseYear = jsonObject.getInt("releaseYear");
                     String imgUrl = jsonObject.optString("imgUrl", null);
                     int lengthInMinutes = jsonObject.optInt("lengthInMinutes", 0);
                     double rating = jsonObject.optDouble("rating", 0.0);
                     List<Genre> genres = new ArrayList<>();
-                    for (int j=0;j<genresArray.length(); j++){
-                        String genreString=genresArray.getString(j);
+                    for (int j = 0; j < genresArray.length(); j++) {
+                        String genreString = genresArray.getString(j);
                         genres.add(Genre.valueOf(genreString));
                     }
                     JSONArray directorsArray = jsonObject.getJSONArray("directors");
                     List<String> directors = new ArrayList<>();
-                    for (int j=0; j<directorsArray.length(); j++){
+                    for (int j = 0; j < directorsArray.length(); j++) {
                         directors.add(directorsArray.getString(j));
                     }
                     JSONArray writersArray = jsonObject.getJSONArray("writers");
                     List<String> writers = new ArrayList<>();
-                    for (int j=0; j<writersArray.length(); j++){
+                    for (int j = 0; j < writersArray.length(); j++) {
                         writers.add(writersArray.getString(j));
                     }
                     JSONArray mainCastArray = jsonObject.getJSONArray("mainCast");
                     List<String> mainCast = new ArrayList<>();
-                    for (int j=0; j<mainCastArray.length(); j++){
+                    for (int j = 0; j < mainCastArray.length(); j++) {
                         mainCast.add(mainCastArray.getString(j));
                     }
-                    movies.add(new Movie(title, description,genres,id, releaseYear,imgUrl,lengthInMinutes, directors, writers, mainCast, rating));
+                    movies.add(new Movie(title, description, genres, id, releaseYear, imgUrl, lengthInMinutes, directors, writers, mainCast, rating));
                 }
-            } catch (JSONException e){
+            } catch (JSONException e) {
                 e.printStackTrace();
             }
             //String jsonData = response.body().string(); //A
@@ -79,8 +79,12 @@ public class MovieAPI {
         return movies; //A
     }
 
+    public String generateRequestString() {
+        return "https://prog2.fh-campuswien.ac.at/movies";
+    }
+
     public String generateRequestString(String query, Object genre, int year, double rating) {
-        StringBuilder url = new StringBuilder("https://prog2.fh-campuswien.ac.at/movies");
+        StringBuilder url = new StringBuilder(generateRequestString());
 
         List<String> params = new ArrayList<>();
 
