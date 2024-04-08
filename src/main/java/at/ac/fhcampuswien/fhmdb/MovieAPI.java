@@ -31,7 +31,7 @@ public class MovieAPI {
     }
 
     public String generateRequestString(String query, Object genre, int year, double rating) {
-        String url = "https://prog2.fh-campuswien.ac.at/movies";
+        StringBuilder url = new StringBuilder("https://prog2.fh-campuswien.ac.at/movies");
 
         List<String> params = new ArrayList<>();
 
@@ -49,14 +49,14 @@ public class MovieAPI {
         }
 
         if (!params.isEmpty()) { // add the queries to the base url
-            url = url + "?";
+            url.append("?");
             for (String s : params) {
-                url = url + "&" + s;
+                url.append("&").append(s);
             }
         }
 
         System.out.println(url);
-        return url;
+        return url.toString();
     }
 
     public static void main(String[] args) throws IOException {

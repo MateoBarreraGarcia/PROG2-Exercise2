@@ -221,4 +221,19 @@ class HomeControllerTest {
         assertEquals(homeController.allMovies, homeController.observableMovies);
     }
 
+    @Test
+    void get_between_years_returns_all_movies_released_between_start_year_and_end_year() {
+
+    }
+
+    @Test
+    void get_between_years_with_null_end_year_returns_all_movies_released_after_start_year() {
+
+    }
+
+    @Test
+    void get_between_years_with_null_start_year_returns_all_movies_released_before_end_year() {
+
+    }
+
 }

@@ -20,6 +20,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 import java.util.ResourceBundle;
+import java.util.stream.Collectors;
 
 public class HomeController implements Initializable {
     @FXML
@@ -153,5 +154,14 @@ public class HomeController implements Initializable {
 
     public void sortBtnClicked(ActionEvent actionEvent) {
         sortMovies();
+    }
+
+    public List<Movie> getMoviesBetweenYears(List<Movie> movies, int startYear, int endYear) {
+        List<Movie> filteredMovies = movies.stream()
+                .filter(Objects::nonNull)
+                //.filter(m -> m.getYear >= startYear && m.getYear <= endYear)
+                .toList();
+
+        return filteredMovies;
     }
 }
