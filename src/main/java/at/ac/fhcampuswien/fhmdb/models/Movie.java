@@ -132,15 +132,13 @@ public class Movie {
     }
 
     public static List<Movie> initializeMovies(){
-        List <Movie> movies = new ArrayList<>();
-        // TODO: (MS) Call API to get all Movies fpr Initialisation
         MovieAPI movieAPI = new MovieAPI();
         try {
-            movies = movieAPI.getRequest(movieAPI.generateRequestString());
+            return movieAPI.getRequest(movieAPI.generateRequestString());
         }catch (IOException ex){
             ex.printStackTrace();
         }
 
-        return movies;
+        return new ArrayList<>();
     }
 }

@@ -83,7 +83,7 @@ public class MovieAPI {
         return "https://prog2.fh-campuswien.ac.at/movies";
     }
 
-    public String generateRequestString(String query, Object genre, int year, double rating) {
+    public String generateRequestString(String query, Object genre, Integer year, Double rating) {
         StringBuilder url = new StringBuilder(generateRequestString());
 
         List<String> params = new ArrayList<>();
@@ -91,36 +91,28 @@ public class MovieAPI {
         if (!query.isEmpty()) {
             params.add("query=" + query);
         }
-        if (genre != null && !genre.toString().equals("No filter")) {
+        if (genre != null && genre != Genre.All_GENRES) {
             params.add("genre=" + genre);
         }
-        if (year != 0) {
-            params.add("year=" + year);
+        if (year != null) {
+            params.add("releaseYear=" + year);
         }
-        if (rating != 0) {
+        if (rating != null) {
             params.add("ratingFrom=" + rating);
         }
 
         if (!params.isEmpty()) { // add the queries to the base url
             url.append("?");
             for (String s : params) {
-                url.append("&").append(s);
+                if (params.indexOf(s) != 0) {
+                    url.append("&");
+                }
+                url.append(s);
             }
         }
 
         System.out.println(url);
         return url.toString();
-    }
-
-    public static void main(String[] args) throws IOException {
-        MovieAPI movieAPI = new MovieAPI();
-        String requestUrl = movieAPI.generateRequestString("", null, 0, 0);
-        List<Movie> movies = movieAPI.getRequest(requestUrl);
-        //movieAPI.getRequest("https://prog2.fh-campuswien.ac.at/movies");
-        //movieAPI.generateRequestString("", null, 0, 0);
-        for (Movie movie : movies) {
-            System.out.println(movie.getTitle());
-        }
     }
 }
 

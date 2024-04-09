@@ -13,13 +13,11 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.TextField;
-import javafx.scene.layout.Border;
 //import java.stream.Collectors;
 
 import java.io.IOException;
 import java.net.URL;
 import java.util.*;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public class HomeController implements Initializable {
@@ -61,6 +59,9 @@ public class HomeController implements Initializable {
         add("0.0+");
     }};
 
+    private String yearFilerNoFilter = "No Year filter";
+    private String ratingFilerNoFilter = "No Rating filter";
+
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle)
     {
@@ -82,22 +83,22 @@ public class HomeController implements Initializable {
         movieListView.setCellFactory(movieListView -> new MovieCell()); // apply custom cells to the listview
 
         Object[] genres = Genre.values();   // get all genres
-        genreComboBox.getItems().add("No Genre filter");  // add "no filter" to the combobox
-        genreComboBox.getItems().addAll(genres);    // add all genres to the combobox
+        //genreComboBox.getItems().add("No Genre filter");  // add "no filter" to the combobox
         genreComboBox.setPromptText("Filter by Genre");
+        genreComboBox.getItems().addAll(genres);    // add all genres to the combobox
 
 
         yearComboBox.setEditable(true);
         yearComboBox.setPromptText("Filter for Year");
-        yearComboBox.getItems().add("No Year filter");
-        yearComboBox.getItems().addAll(observableMovies.stream().map(o -> o.getReleaseYear()).distinct().collect(Collectors.toList()));
+        yearComboBox.getItems().add(yearFilerNoFilter);
+        yearComboBox.getItems().addAll(observableMovies.stream().map(o -> o.getReleaseYear()).distinct().sorted().collect(Collectors.toList()));
 
 
         // Ein Slider bei welchen man ein minimum und Maximum einstellen kann währe besser als ein dropdown
         // Von bis eingabe Felder oder Auf- / Absteigend nach Rating sortieren
         ratingComboBox.setEditable(true);
         ratingComboBox.setPromptText("Filter for Rating");
-        ratingComboBox.getItems().add("No Rating filter");
+        ratingComboBox.getItems().add(ratingFilerNoFilter);
 
 
         ratingComboBox.getItems().addAll(ratingSelectionList);
@@ -175,7 +176,8 @@ public class HomeController implements Initializable {
         observableMovies.addAll(filteredMovies);
     }
 
-    public void searchAPIForMovies(String searchQuery, Object genre, int year, double rating) {
+    public void searchAPIForMovies(String searchQuery, Object genre, Integer year, Double rating)
+    {
 
         MovieAPI movieAPI = new MovieAPI();
 
@@ -199,18 +201,20 @@ public class HomeController implements Initializable {
 
         String searchQuery = searchField.getText().trim().toLowerCase();
         Object genre = genreComboBox.getSelectionModel().getSelectedItem();
-        int year;
-        try{
-            year = Integer.parseInt(yearComboBox.getEditor().getText());
-        }catch(NumberFormatException e){
+        Integer year = null;
+        try {
+            if (yearComboBox.getEditor().getText() != "" && !yearComboBox.getEditor().getText().equals(yearFilerNoFilter))
+                year = Integer.parseInt(yearComboBox.getEditor().getText());
+        } catch (NumberFormatException e) {
             yearComboBox.setStyle("-fx-text-box-border: red;");
             return;
         }
 
-        double rating = 0.0; // Default value can be set because if nothing is set it is like 0.0 an above
-        try{
-            rating = Double.parseDouble(ratingComboBox.getEditor().getText());
-        }catch(NumberFormatException e){
+        Double rating = null; // Default value can be set because if nothing is set it is like 0.0 an above
+        try {
+            if (ratingComboBox.getEditor().getText() != "" && !ratingComboBox.getEditor().getText().equals(ratingFilerNoFilter))
+                rating = Double.parseDouble(ratingComboBox.getEditor().getText().replace("+",""));
+        } catch (NumberFormatException e) {
             yearComboBox.setStyle("-fx-text-box-border: red;");
             return;
         }
@@ -225,30 +229,38 @@ public class HomeController implements Initializable {
     }
 
     //Streams:
-    public int getLongestMovieTitle (List<Movie> movies){
+    public int getLongestMovieTitle(List<Movie> movies)
+    {
         return movies.stream()
-                .mapToInt(movie ->movie.getTitle().length())
+                .mapToInt(movie -> movie.getTitle().length())
                 .max()
                 .orElse(0);
     }
 
-    public long countMoviesFrom(List<Movie> movies, String director){
+    public long countMoviesFrom(List<Movie> movies, String director)
+    {
         return movies.stream()
                 .filter(movie -> movie.getDirectors().equals(director))
                 .count();
     }
 
 
-    public List<Movie> getMoviesBetweenYears(List<Movie> movies, int startYear, int endYear) {
+    public List<Movie> getMoviesBetweenYears(List<Movie> movies, int startYear, int endYear)
+    {
+        if (startYear > endYear) {
+            throw new IllegalArgumentException("Start year cannot be greater than end year");
+        }
+
         List<Movie> filteredMovies = movies.stream()
                 .filter(Objects::nonNull)
-                //.filter(m -> m.getYear >= startYear && m.getYear <= endYear)
+                .filter(m -> m.getReleaseYear() >= startYear && m.getReleaseYear() <= endYear)
                 .toList();
 
         return filteredMovies;
     }
 
-    public String getMostPopularActor(List<Movie> movies){
+    public String getMostPopularActor(List<Movie> movies)
+    {
         var a = movies.stream().collect(Collectors.groupingBy(o -> o.getMainCast(), Collectors.counting()));
 
         var c = movies.stream().filter(f -> f != null).collect(Collectors.groupingBy(o -> o.getMainCast(), Collectors.counting()));
