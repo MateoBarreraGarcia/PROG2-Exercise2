@@ -203,7 +203,7 @@ public class HomeController implements Initializable {
         Object genre = genreComboBox.getSelectionModel().getSelectedItem();
         Integer year = null;
         try {
-            if (yearComboBox.getEditor().getText() != "" && yearComboBox.getEditor().getText() != yearFilerNoFilter)
+            if (yearComboBox.getEditor().getText() != "" && !yearComboBox.getEditor().getText().equals(yearFilerNoFilter))
                 year = Integer.parseInt(yearComboBox.getEditor().getText());
         } catch (NumberFormatException e) {
             yearComboBox.setStyle("-fx-text-box-border: red;");
@@ -212,8 +212,7 @@ public class HomeController implements Initializable {
 
         Double rating = null; // Default value can be set because if nothing is set it is like 0.0 an above
         try {
-            String r = ratingComboBox.getEditor().getText();
-            if (ratingComboBox.getEditor().getText() != "" && ratingComboBox.getEditor().getText() != ratingFilerNoFilter)
+            if (ratingComboBox.getEditor().getText() != "" && !ratingComboBox.getEditor().getText().equals(ratingFilerNoFilter))
                 rating = Double.parseDouble(ratingComboBox.getEditor().getText());
         } catch (NumberFormatException e) {
             yearComboBox.setStyle("-fx-text-box-border: red;");
