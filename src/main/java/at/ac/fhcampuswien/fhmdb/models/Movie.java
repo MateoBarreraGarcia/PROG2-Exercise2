@@ -1,5 +1,7 @@
 package at.ac.fhcampuswien.fhmdb.models;
 
+import at.ac.fhcampuswien.fhmdb.MovieAPI;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
