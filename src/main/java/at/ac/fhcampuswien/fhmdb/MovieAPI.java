@@ -91,7 +91,7 @@ public class MovieAPI {
         if (!query.isEmpty()) {
             params.add("query=" + query);
         }
-        if (genre != null && !genre.toString().equals("No filter")) {
+        if (genre != null && genre != Genre.All_GENRES) {
             params.add("genre=" + genre);
         }
         if (year != null) {

@@ -1,6 +1,7 @@
 package at.ac.fhcampuswien.fhmdb.models;
 
 public enum Genre {
+    All_GENRES,
     ACTION,
     ADVENTURE,
     ANIMATION,
