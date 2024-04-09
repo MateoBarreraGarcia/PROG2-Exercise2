@@ -83,7 +83,7 @@ public class MovieAPI {
         return "https://prog2.fh-campuswien.ac.at/movies";
     }
 
-    public String generateRequestString(String query, Object genre, int year, double rating) {
+    public String generateRequestString(String query, Object genre, Integer year, Double rating) {
         StringBuilder url = new StringBuilder(generateRequestString());
 
         List<String> params = new ArrayList<>();
@@ -94,10 +94,10 @@ public class MovieAPI {
         if (genre != null && !genre.toString().equals("No filter")) {
             params.add("genre=" + genre);
         }
-        if (year != 0) {
-            params.add("year=" + year);
+        if (year != null) {
+            params.add("releaseYear=" + year);
         }
-        if (rating != 0) {
+        if (rating != null) {
             params.add("ratingFrom=" + rating);
         }
 
