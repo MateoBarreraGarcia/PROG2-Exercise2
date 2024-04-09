@@ -248,14 +248,14 @@ class HomeControllerTest {
     }
 
     @Test
-    void test_Get_Longest_Movie_Title(){
+    void test_Get_Longest_Movie_Title() {
         //given
         List<Movie> movies = Arrays.asList(
                 new Movie("Interstellar", "When Earth becomes uninhabitable in the future, a farmer and ex-NASA pilot, Joseph Cooper, is tasked to pilot a spacecraft, along with a team of researchers, to find a new planet for humans.", Arrays.asList(Genre.ADVENTURE, Genre.DRAMA, Genre.SCIENCE_FICTION), "8382349", 2014, "jhecbsdhc", 169, Arrays.asList("Christopher Nolan"), Arrays.asList("Christopher Nola"), Arrays.asList("Matthew McConaughey", "Anne Hathaway", "Jessica Chastain"), 8.7),
-                new Movie("The Shawshank Redemtipn", "Over the course of several years, two convicts form a friendship, seeking consolation and, eventually, redemption through basic compassion.", Arrays.asList(Genre.DRAMA), "8382349", 1994, "jhecbsdhc", 144, Arrays.asList("Frank Darabont"), Arrays.asList("Stephen King","Frank Darabont"), Arrays.asList("Tim Robbins", "Morgan Freeman", "Bob Gunton"), 9.3),
+                new Movie("The Shawshank Redemption", "Over the course of several years, two convicts form a friendship, seeking consolation and, eventually, redemption through basic compassion.", Arrays.asList(Genre.DRAMA), "8382349", 1994, "jhecbsdhc", 144, Arrays.asList("Frank Darabont"), Arrays.asList("Stephen King", "Frank Darabont"), Arrays.asList("Tim Robbins", "Morgan Freeman", "Bob Gunton"), 9.3),
                 new Movie("Inception", "A thief who steals corporate secrets through the use of dream-sharing technology is given the inverse task of planting an idea into the mind of a C.E.O., but his tragic past may doom the project and his team to disaster.", Arrays.asList(Genre.DRAMA), "8382349", 2010, "jhecbsdhc", 148, Arrays.asList("Christopher Nolan"), Arrays.asList("Christopher Nolan"), Arrays.asList("Leonardo DiCaprio", "Joseph Gordon-Levitt", "Elliot Page"), 8.8));
 
-                HomeController controller = new HomeController();
+        HomeController controller = new HomeController();
 
         //when
         int longestTitleLength = controller.getLongestMovieTitle(movies);
@@ -264,7 +264,8 @@ class HomeControllerTest {
         assertEquals(24, longestTitleLength);
 
 
-    }@Test
+    }
+    @Test
     void test_count_movies_from (){
 
         //given
