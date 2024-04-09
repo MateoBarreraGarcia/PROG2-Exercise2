@@ -104,23 +104,15 @@ public class MovieAPI {
         if (!params.isEmpty()) { // add the queries to the base url
             url.append("?");
             for (String s : params) {
-                url.append("&").append(s);
+                if (params.indexOf(s) != 0) {
+                    url.append("&");
+                }
+                url.append(s);
             }
         }
 
         System.out.println(url);
         return url.toString();
-    }
-
-    public static void main(String[] args) throws IOException {
-        MovieAPI movieAPI = new MovieAPI();
-        String requestUrl = movieAPI.generateRequestString("", null, 0, 0);
-        List<Movie> movies = movieAPI.getRequest(requestUrl);
-        //movieAPI.getRequest("https://prog2.fh-campuswien.ac.at/movies");
-        //movieAPI.generateRequestString("", null, 0, 0);
-        for (Movie movie : movies) {
-            System.out.println(movie.getTitle());
-        }
     }
 }
 
