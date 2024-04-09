@@ -83,7 +83,7 @@ public class HomeController implements Initializable {
         movieListView.setCellFactory(movieListView -> new MovieCell()); // apply custom cells to the listview
 
         Object[] genres = Genre.values();   // get all genres
-        genreComboBox.getItems().add("No Genre filter");  // add "no filter" to the combobox
+        //genreComboBox.getItems().add("No Genre filter");  // add "no filter" to the combobox
         genreComboBox.setPromptText("Filter by Genre");
         genreComboBox.getItems().addAll(genres);    // add all genres to the combobox
 
@@ -213,7 +213,7 @@ public class HomeController implements Initializable {
         Double rating = null; // Default value can be set because if nothing is set it is like 0.0 an above
         try {
             if (ratingComboBox.getEditor().getText() != "" && !ratingComboBox.getEditor().getText().equals(ratingFilerNoFilter))
-                rating = Double.parseDouble(ratingComboBox.getEditor().getText());
+                rating = Double.parseDouble(ratingComboBox.getEditor().getText().replace("+",""));
         } catch (NumberFormatException e) {
             yearComboBox.setStyle("-fx-text-box-border: red;");
             return;
