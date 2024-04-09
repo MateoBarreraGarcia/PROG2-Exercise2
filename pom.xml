@@ -93,6 +93,9 @@
                             <noManPages>true</noManPages>
                             <stripDebug>true</stripDebug>
                             <noHeaderFiles>true</noHeaderFiles>
+                            <bundleArguments>
+                                <Info.plist>${project.build.directory}/jlink/app/Contents/Info.plist</Info.plist>
+                            </bundleArguments>
                         </configuration>
                     </execution>
                 </executions>

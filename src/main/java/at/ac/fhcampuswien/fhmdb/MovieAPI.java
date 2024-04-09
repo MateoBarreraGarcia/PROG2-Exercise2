@@ -88,7 +88,7 @@ public class MovieAPI {
 
         List<String> params = new ArrayList<>();
 
-        if (!query.isEmpty()) {
+        if (query != null && !query.isEmpty()) {
             params.add("query=" + query);
         }
         if (genre != null && genre != Genre.All_GENRES) {
