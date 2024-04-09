@@ -12,6 +12,7 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 //import java.stream.Collectors;
 
@@ -187,8 +188,14 @@ public class HomeController implements Initializable {
 
             List<Movie> filteredMovies = movieAPI.getRequest(url);
             // update the ui with the list returned from the request
-            observableMovies.clear();
-            observableMovies.addAll(filteredMovies);
+            if (filteredMovies.isEmpty()) {
+                Label label = new Label("No results found");
+                movieListView.setPlaceholder(label);
+                observableMovies.clear(); // Clear any existing movie data
+            } else {
+                observableMovies.clear();
+                observableMovies.addAll(filteredMovies);
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -263,6 +270,8 @@ public class HomeController implements Initializable {
 
     public String getMostPopularActor(List<Movie> movies)
     {
+        //var test = movies.stream().filter(o -> o.getMainCast().addAll())
+
         var a = movies.stream().collect(Collectors.groupingBy(o -> o.getMainCast(), Collectors.counting()));
 
         var c = movies.stream().filter(f -> f != null).collect(Collectors.groupingBy(o -> o.getMainCast(), Collectors.counting()));
