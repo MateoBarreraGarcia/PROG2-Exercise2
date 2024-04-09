@@ -33,11 +33,13 @@ public class MovieAPI {
         if (response.code() == 200) {
             // the request was successful and is parsed into objects
             try {
-                String jsonData = response.body().string();
-                JSONArray jsonArray = new JSONArray(jsonData);
+                String jsonData = response.body().string(); //nimmt den JSONSTRING aus der Antwort
+                JSONArray jsonArray = new JSONArray(jsonData); //erstellt ein JSONARRAY aus dem JSONSTRING
 
+                //durchläuft das JSONARRAY und erstellt für den Eintrag ein Movie-Objekt
                 for (int i = 0; i < jsonArray.length(); i++) {
-                    JSONObject jsonObject = jsonArray.getJSONObject(i);
+                    JSONObject jsonObject = jsonArray.getJSONObject(i); //holt den akutuellen JSON-Eintrag
+                    //nimmt die Daten des Films aus dem JSON-Objekt
                     String title = jsonObject.getString("title");
                     String description = jsonObject.getString("description");
                     JSONArray genresArray = jsonObject.getJSONArray("genres");
@@ -46,11 +48,13 @@ public class MovieAPI {
                     String imgUrl = jsonObject.optString("imgUrl", null);
                     int lengthInMinutes = jsonObject.optInt("lengthInMinutes", 0);
                     double rating = jsonObject.optDouble("rating", 0.0);
+                    //durchläuft das JSONARRAY der Genres und sie fügt der Genre-Liste hinzu
                     List<Genre> genres = new ArrayList<>();
                     for (int j = 0; j < genresArray.length(); j++) {
                         String genreString = genresArray.getString(j);
                         genres.add(Genre.valueOf(genreString));
                     }
+
                     JSONArray directorsArray = jsonObject.getJSONArray("directors");
                     List<String> directors = new ArrayList<>();
                     for (int j = 0; j < directorsArray.length(); j++) {
@@ -68,7 +72,7 @@ public class MovieAPI {
                     }
                     movies.add(new Movie(title, description, genres, id, releaseYear, imgUrl, lengthInMinutes, directors, writers, mainCast, rating));
                 }
-            } catch (JSONException e) {
+            } catch (JSONException e) { //behandelt JSON analysenfehler, wenn sie auftreten
                 e.printStackTrace();
             }
             //String jsonData = response.body().string(); //A
@@ -76,7 +80,7 @@ public class MovieAPI {
         } else {
             System.out.println("There was a problem with the request. Error-Code: " + response.code());
         }
-        return movies; //A
+        return movies; //gibt die Liste der Movie-Objekte zurück
     }
 
     public String generateRequestString() {

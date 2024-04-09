@@ -256,6 +256,7 @@ class HomeControllerTest {
         assertEquals(testMovieData, homeController.observableMovies);
     }
 
+
     /*
     The following tests are for the stream methods
      */
