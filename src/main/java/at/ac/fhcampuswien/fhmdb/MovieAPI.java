@@ -8,11 +8,9 @@ import okhttp3.Response;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.json.*;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 
@@ -95,7 +93,7 @@ public class MovieAPI {
         if (query != null && !query.isEmpty()) {
             params.add("query=" + query);
         }
-        if (genre != null && genre != Genre.All_GENRES) {
+        if (genre != null && genre != Genre.ALL_GENRES) {
             params.add("genre=" + genre);
         }
         if (year != null) {

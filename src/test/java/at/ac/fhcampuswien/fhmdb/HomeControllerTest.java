@@ -181,7 +181,7 @@ class HomeControllerTest {
     @Test
     void query_filter_matches_with_lower_and_uppercase_letters() {
         // given
-        String query = "Lion";
+        String query = "liON";
 
         // when
         List<Movie> actual = homeController.filterByQuery(testMovieData, query);
