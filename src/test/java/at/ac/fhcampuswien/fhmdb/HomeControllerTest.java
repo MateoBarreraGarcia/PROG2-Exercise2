@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -18,7 +19,8 @@ class HomeControllerTest {
     private static List<Movie> testMovieData;
 
     @BeforeAll
-    static void init() {
+    static void init()
+    {
         homeController = new HomeController();
         testMovieData = Arrays.asList(
                 new Movie("Interstellar",
@@ -50,13 +52,15 @@ class HomeControllerTest {
 
     // The commented out tests are from the exercise 1 sample solution
     @Test
-    void at_initialization_allMovies_and_observableMovies_should_be_filled_and_equal() {
+    void at_initialization_allMovies_and_observableMovies_should_be_filled_and_equal()
+    {
         homeController.initializeState();
         assertEquals(homeController.allMovies, homeController.observableMovies);
     }
 
     @Test
-    void if_not_yet_sorted_sort_is_applied_in_ascending_order() {
+    void if_not_yet_sorted_sort_is_applied_in_ascending_order()
+    {
         // given
         homeController.observableMovies.clear();
         homeController.observableMovies.addAll(testMovieData);
@@ -97,7 +101,8 @@ class HomeControllerTest {
     }
 
     @Test
-    void if_last_sort_ascending_next_sort_should_be_descending() {
+    void if_last_sort_ascending_next_sort_should_be_descending()
+    {
         // given
         homeController.observableMovies.clear();
         homeController.observableMovies.addAll(testMovieData);
@@ -138,7 +143,8 @@ class HomeControllerTest {
     }
 
     @Test
-    void if_last_sort_descending_next_sort_should_be_ascending() {
+    void if_last_sort_descending_next_sort_should_be_ascending()
+    {
         // given
         homeController.observableMovies.clear();
         homeController.observableMovies.addAll(testMovieData);
@@ -176,10 +182,12 @@ class HomeControllerTest {
                         Arrays.asList("Tim Robbins", "Morgan Freeman", "Bob Gunton"), 9.3));
 
         assertEquals(expected, homeController.observableMovies);
+
     }
 
     @Test
-    void query_filter_matches_with_lower_and_uppercase_letters() {
+    void query_filter_matches_with_lower_and_uppercase_letters()
+    {
         // given
         String query = "Lion";
 
@@ -198,7 +206,8 @@ class HomeControllerTest {
     }
 
     @Test
-    void query_filter_with_null_movie_list_throws_exception() {
+    void query_filter_with_null_movie_list_throws_exception()
+    {
         // given
         String query = "IfE";
 
@@ -207,7 +216,8 @@ class HomeControllerTest {
     }
 
     @Test
-    void query_filter_with_null_value_returns_unfiltered_list() {
+    void query_filter_with_null_value_returns_unfiltered_list()
+    {
         // given
         String query = null;
 
@@ -219,7 +229,8 @@ class HomeControllerTest {
     }
 
     @Test
-    void genre_filter_with_null_value_returns_unfiltered_list() {
+    void genre_filter_with_null_value_returns_unfiltered_list()
+    {
         // given
         Genre genre = null;
 
@@ -231,7 +242,8 @@ class HomeControllerTest {
     }
 
     @Test
-    void genre_filter_returns_all_movies_containing_given_genre() {
+    void genre_filter_returns_all_movies_containing_given_genre()
+    {
         // given
         Genre genre = Genre.ADVENTURE;
 
@@ -243,7 +255,8 @@ class HomeControllerTest {
     }
 
     @Test
-    void no_filtering_ui_if_empty_query_or_no_genre_is_set() {
+    void no_filtering_ui_if_empty_query_or_no_genre_is_set()
+    {
         // given
         homeController.allMovies = testMovieData;
         homeController.observableMovies.clear();
@@ -262,7 +275,8 @@ class HomeControllerTest {
      */
 
     @Test
-    void test_Get_Longest_Movie_Title() {
+    void test_Get_Longest_Movie_Title()
+    {
 
         // given and when
         int longestTitleLength = homeController.getLongestMovieTitle(testMovieData);
@@ -273,7 +287,8 @@ class HomeControllerTest {
     }
 
     @Test
-    void test_count_movies_from() {
+    void test_count_movies_from()
+    {
 
         //given
         String director = "Christopher Nolan";
@@ -287,7 +302,8 @@ class HomeControllerTest {
     }
 
     @Test
-    void get_between_years_returns_all_movies_released_between_start_year_and_end_year() {
+    void get_between_years_returns_all_movies_released_between_start_year_and_end_year()
+    {
         // given
         int startYear = 2000;
         int endYear = 2018;
@@ -312,7 +328,8 @@ class HomeControllerTest {
     }
 
     @Test
-    void get_between_years_with_same_start_year_and_end_year_returns_all_movies_released_that_year() {
+    void get_between_years_with_same_start_year_and_end_year_returns_all_movies_released_that_year()
+    {
         // given
         int startYear = 1994;
         int endYear = 1994;
@@ -337,7 +354,8 @@ class HomeControllerTest {
     }
 
     @Test
-    void get_between_years_with_greater_start_year_than_end_year_throws_exception() {
+    void get_between_years_with_greater_start_year_than_end_year_throws_exception()
+    {
         // given
         int startYear = 2000;
         int endYear = 1953;
@@ -346,4 +364,92 @@ class HomeControllerTest {
         assertThrows(IllegalArgumentException.class, () -> homeController.getMoviesBetweenYears(testMovieData, startYear, endYear));
     }
 
+    @Test
+    void get_most_popular_actor_one_actor()
+    {
+        // given
+        List<Movie> extendedTestDataList = new ArrayList<>(testMovieData);
+        extendedTestDataList.addAll(Arrays.asList(
+                new Movie("The Lord of the Rings: The Return of the King",
+                        "Gandalf and Aragorn lead the World of Men against Sauron's army to draw his gaze from Frodo and Sam as they approach Mount Doom with the One Ring.",
+                        Arrays.asList(Genre.DRAMA, Genre.FANTASY, Genre.ADVENTURE), "a47afd8a-b768-4a34-8ed6-bf5d90c0feeb", 2003, "https://m.media-amazon.com/images/M/MV5BNzA5ZDNlZWMtM2NhNS00NDJjLTk4NDItYTRmY2EwMWZlMTY3XkEyXkFqcGdeQXVyNzkwMjQ5NzM@._V1_FMjpg_UX1000_.jpg", 201,
+                        Arrays.asList("Peter Jackson"), Arrays.asList("J.R.R. Tolkien", "Fran Walsh", "Philippa Boyens"),
+                        Arrays.asList("Elijah Wood", "Ian McKellen", "Viggo Mortensen"), 8.9),
+
+                new Movie("The Lord of the Rings: The Two Towers",
+                        "While Frodo and Sam edge closer to Mordor with the help of the shifty Gollum, the divided fellowship makes a stand against Sauron\"s new ally, Saruman, and his hordes of Isengard.",
+                        Arrays.asList(Genre.ADVENTURE, Genre.DRAMA, Genre.FANTASY), "e109ec5f-c3af-472d-93e5-9c4c0d04d640", 2002, "https://m.media-amazon.com/images/M/MV5BZTUxNzg3MDUtYjdmZi00ZDY1LTkyYTgtODlmOGY5N2RjYWUyXkEyXkFqcGdeQXVyMTA0MTM5NjI2._V1_FMjpg_UX1000_.jpg", 179,
+                        Arrays.asList("Peter Jackson"), Arrays.asList("J.R.R. Tolkien", "Fran Walsh", "Philippa Boyens"),
+                        Arrays.asList("Elijah Wood"), 8.7)));
+
+
+        // when
+        String actual = homeController.getMostPopularActor(extendedTestDataList);
+
+        // then
+        String expected = "Elijah Wood";
+
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    void get_most_popular_actor_multiple_most_popular_actors()
+    {
+        // given
+        List<Movie> extendedTestDataList = new ArrayList<>(testMovieData);
+        extendedTestDataList.addAll(Arrays.asList(
+                new Movie("The Lord of the Rings: The Return of the King",
+                        "Gandalf and Aragorn lead the World of Men against Sauron's army to draw his gaze from Frodo and Sam as they approach Mount Doom with the One Ring.",
+                        Arrays.asList(Genre.DRAMA, Genre.FANTASY, Genre.ADVENTURE), "a47afd8a-b768-4a34-8ed6-bf5d90c0feeb", 2003, "https://m.media-amazon.com/images/M/MV5BNzA5ZDNlZWMtM2NhNS00NDJjLTk4NDItYTRmY2EwMWZlMTY3XkEyXkFqcGdeQXVyNzkwMjQ5NzM@._V1_FMjpg_UX1000_.jpg", 201,
+                        Arrays.asList("Peter Jackson"), Arrays.asList("J.R.R. Tolkien", "Fran Walsh", "Philippa Boyens"),
+                        Arrays.asList("Elijah Wood", "Ian McKellen", "Viggo Mortensen"), 8.9),
+
+                new Movie("The Lord of the Rings: The Two Towers",
+                        "While Frodo and Sam edge closer to Mordor with the help of the shifty Gollum, the divided fellowship makes a stand against Sauron\"s new ally, Saruman, and his hordes of Isengard.",
+                        Arrays.asList(Genre.ADVENTURE, Genre.DRAMA, Genre.FANTASY), "e109ec5f-c3af-472d-93e5-9c4c0d04d640", 2002, "https://m.media-amazon.com/images/M/MV5BZTUxNzg3MDUtYjdmZi00ZDY1LTkyYTgtODlmOGY5N2RjYWUyXkEyXkFqcGdeQXVyMTA0MTM5NjI2._V1_FMjpg_UX1000_.jpg", 179,
+                        Arrays.asList("Peter Jackson"), Arrays.asList("J.R.R. Tolkien", "Fran Walsh", "Philippa Boyens"),
+                        Arrays.asList("Elijah Wood", "Ian McKellen", "Viggo Mortensen"), 8.7)));
+
+        // when
+        String actual = homeController.getMostPopularActor(extendedTestDataList);
+
+        // then
+        String expected = "Viggo Mortensen";
+
+        assertEquals(expected, actual);
+    }
+
+
+    @Test
+    void get_most_popular_actor_no_actors()
+    {
+        // given
+        List<Movie> tempTestDataList = Arrays.asList(new Movie("Interstellar",
+                        "When Earth becomes uninhabitable in the future, a farmer and ex-NASA pilot, Joseph Cooper, is tasked to pilot a spacecraft, along with a team of researchers, to find a new planet for humans.",
+                        Arrays.asList(Genre.ADVENTURE, Genre.DRAMA, Genre.SCIENCE_FICTION), "8382349", 2014, "jhecbsdhc", 169,
+                        Arrays.asList("Christopher Nolan"), Arrays.asList("Christopher Nola"), Collections.emptyList(), 8.7),
+                new Movie("The Shawshank Redemption",
+                        "Over the course of several years, two convicts form a friendship, seeking consolation and, eventually, redemption through basic compassion.",
+                        Arrays.asList(Genre.DRAMA), "8382349", 1994, "jhecbsdhc", 144,
+                        Arrays.asList("Frank Darabont"), Arrays.asList("Stephen King", "Frank Darabont"),
+                        Collections.emptyList(), 9.3),
+                new Movie("Inception",
+                        "A thief who steals corporate secrets through the use of dream-sharing technology is given the inverse task of planting an idea into the mind of a C.E.O., but his tragic past may doom the project and his team to disaster.",
+                        Arrays.asList(Genre.DRAMA), "8382349", 2010, "jhecbsdhc", 148,
+                        Arrays.asList("Christopher Nolan"), Arrays.asList("Christopher Nolan"),
+                        Collections.emptyList(), 8.8),
+                new Movie("The Godfather",
+                        "The aging patriarch of an organized crime dynasty transfers control of his clandestine empire to his reluctant son.",
+                        Arrays.asList(Genre.DRAMA), "", 1972, "", 175,
+                        Arrays.asList("Francis Ford Coppola"), Arrays.asList("Mario Puzo", "Francis Ford Coppola"),
+                        Collections.emptyList(), 9.2));
+
+        // when
+        String actual = homeController.getMostPopularActor(tempTestDataList);
+
+        // then
+        String expected = "";
+
+        assertEquals(expected, actual);
+    }
 }

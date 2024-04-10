@@ -19,6 +19,7 @@ import javafx.scene.control.TextField;
 import java.io.IOException;
 import java.net.URL;
 import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public class HomeController implements Initializable {
@@ -270,14 +271,11 @@ public class HomeController implements Initializable {
 
     public String getMostPopularActor(List<Movie> movies)
     {
-        //var test = movies.stream().filter(o -> o.getMainCast().addAll())
-
-        var a = movies.stream().collect(Collectors.groupingBy(o -> o.getMainCast(), Collectors.counting()));
-
-        var c = movies.stream().filter(f -> f != null).collect(Collectors.groupingBy(o -> o.getMainCast(), Collectors.counting()));
-
-        //var b = movies.stream().collect(Collectors.groupingBy(Movie::getMainCast, Collectors.collectingAndThen()));
-
-        return "Hi";
+        return movies.stream().map(Movie::getMainCast) // Gets the mainCast Array
+                .flatMap(o -> Arrays.stream(o.toArray())) // creates a sequential Stream of the arrays
+                .collect(Collectors.groupingBy(Function.identity(), Collectors.counting())) // collects and groups the occurrences of the strings
+                .entrySet().stream()    // Uses a stream on the hashmap
+                .max(Map.Entry.comparingByValue())  // Gets the element with the highest number
+                .map(Map.Entry::getKey).orElse("").toString();  // Returns the key of the element with the highest number
     }
 }
