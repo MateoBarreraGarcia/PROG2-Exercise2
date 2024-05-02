@@ -1,6 +1,6 @@
 
-.background-yellow {
-    -fx-background-color: #f5c518;
+.background-blue {
+    -fx-background-color: #65b2ef;
 }
 
 .background-black {
@@ -11,8 +11,8 @@
     -fx-background-color: #454545;
 }
 
-.text-yellow {
-    -fx-text-fill: #f5c518;
+.text-blue {
+    -fx-text-fill: #65b2ef;
 }
 
 .text-white {
@@ -37,4 +37,18 @@
 .filter-combo-box {
     -fx-background-color: white;
     -fx-text-fill: #ffffff;
+}
+
+.nav-btn {
+    -fx-background-color: #292929;
+    -fx-text-fill: #b5b5b5;
+}
+
+.nav-btn:hover {
+    -fx-background-color: #454545;
+}
+
+.nav-btn-selected {
+    -fx-background-color: #65b2ef;
+    -fx-text-fill: #000000;
 }

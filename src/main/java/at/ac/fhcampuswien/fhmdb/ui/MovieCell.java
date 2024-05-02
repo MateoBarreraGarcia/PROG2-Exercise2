@@ -1,13 +1,12 @@
 package at.ac.fhcampuswien.fhmdb.ui;
 
 import at.ac.fhcampuswien.fhmdb.models.Movie;
+import at.ac.fhcampuswien.fhmdb.models.Screen;
 import javafx.geometry.Insets;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
-import javafx.scene.layout.Background;
-import javafx.scene.layout.BackgroundFill;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import java.util.stream.Collectors;
 
@@ -18,7 +17,15 @@ public class MovieCell extends ListCell<Movie> {
     private final Label releaseYear = new Label();
     private final Label rating = new Label();
     private final HBox additionalInfos = new HBox(releaseYear, rating);
-    private final VBox layout = new VBox(title, detail, genre, additionalInfos);
+    private final Button watchlistBtn = new Button();
+    private final VBox textLayout = new VBox(title, detail, genre, additionalInfos);
+    private final Region layoutFill = new Region();
+    private final HBox mainLayout = new HBox(textLayout, layoutFill, watchlistBtn);
+
+    public MovieCell(Screen screen) {
+        if (screen == Screen.HOME) watchlistBtn.setText("Add to Watchlist");
+        else if (screen == Screen.WATCHLIST) watchlistBtn.setText("Remove");
+    }
 
     @Override
     protected void updateItem(Movie movie, boolean empty) {
@@ -46,23 +53,28 @@ public class MovieCell extends ListCell<Movie> {
 
 
             // color scheme
-            title.getStyleClass().add("text-yellow");
+            title.getStyleClass().add("text-blue");
             detail.getStyleClass().add("text-white");
             genre.getStyleClass().add("text-white");
             genre.setStyle("-fx-font-style: italic");
             releaseYear.getStyleClass().add("text-white");
             rating.getStyleClass().add("text-white");
-            layout.setBackground(new Background(new BackgroundFill(Color.web("#454545"), null, null)));
 
             // layout
             title.fontProperty().set(title.getFont().font(20));
             detail.setMaxWidth(this.getScene().getWidth() - 30);
             detail.setWrapText(true);
             releaseYear.setPadding(new Insets(0, 15, 0, 0));
-            layout.setPadding(new Insets(10));
-            layout.spacingProperty().set(10);
-            layout.alignmentProperty().set(javafx.geometry.Pos.CENTER_LEFT);
-            setGraphic(layout);
+            textLayout.spacingProperty().set(10);
+            textLayout.alignmentProperty().set(javafx.geometry.Pos.CENTER_LEFT);
+
+            // Exercise 3: new Button to add or remove movies to from watchlist
+            watchlistBtn.getStyleClass().add("background-blue");
+
+            HBox.setHgrow(layoutFill, Priority.ALWAYS); // this makes the watchlistBtn stick to the right end of the screen
+            mainLayout.setPadding(new Insets(10));
+            mainLayout.setBackground(new Background(new BackgroundFill(Color.web("#454545"), null, null)));
+            setGraphic(mainLayout);
         }
     }
 }
