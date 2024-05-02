@@ -1,5 +1,6 @@
 package at.ac.fhcampuswien.fhmdb;
 
+import at.ac.fhcampuswien.fhmdb.exceptions.MovieApiException;
 import at.ac.fhcampuswien.fhmdb.models.Genre;
 import at.ac.fhcampuswien.fhmdb.models.Movie;
 import okhttp3.OkHttpClient;
@@ -17,20 +18,20 @@ import java.util.List;
 public class MovieAPI {
     OkHttpClient client = new OkHttpClient();
 
-    public List<Movie> getRequest(String url) throws IOException {
+    public List<Movie> getMoviesRequest(String url) throws MovieApiException {
         Request request = new Request.Builder()
                 .addHeader("User-Agent", "User-Agent")
                 .url(url)
                 .build();
 
-        Response response = client.newCall(request).execute();
-        System.out.println(response.code());
+        try {
+            Response response = client.newCall(request).execute();
 
-        List<Movie> movies = new ArrayList<>(); //A
+            List<Movie> movies = new ArrayList<>(); //A
 
-        if (response.code() == 200) {
-            // the request was successful and is parsed into objects
-            try {
+            if (response.code() == 200) {
+                // the request was successful and is parsed into objects
+
                 String jsonData = response.body().string(); //nimmt den JSONSTRING aus der Antwort
                 JSONArray jsonArray = new JSONArray(jsonData); //erstellt ein JSONARRAY aus dem JSONSTRING
 
@@ -70,15 +71,22 @@ public class MovieAPI {
                     }
                     movies.add(new Movie(title, description, genres, id, releaseYear, imgUrl, lengthInMinutes, directors, writers, mainCast, rating));
                 }
-            } catch (JSONException e) { //behandelt JSON analysenfehler, wenn sie auftreten
-                e.printStackTrace();
+
+                //String jsonData = response.body().string(); //A
+                //System.out.println(response.body().string());
+            } else {
+                System.out.println("HTTP response: " + response.code());
+                throw new MovieApiException("HTTP response: " + response.code());
             }
-            //String jsonData = response.body().string(); //A
-            //System.out.println(response.body().string());
-        } else {
-            System.out.println("There was a problem with the request. Error-Code: " + response.code());
+
+            System.out.println("HTTP response: " + response.code());
+
+            return movies; //gibt die Liste der Movie-Objekte zurück
+        } catch (IOException e) { // if the request execute at line 28 fails
+            throw new MovieApiException("API request failed");
+        } catch (JSONException e) {
+            throw new MovieApiException("Parsing of JSON data failed");
         }
-        return movies; //gibt die Liste der Movie-Objekte zurück
     }
 
     public String generateRequestString() {

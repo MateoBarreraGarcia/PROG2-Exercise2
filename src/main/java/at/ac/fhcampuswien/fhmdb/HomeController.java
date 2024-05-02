@@ -1,5 +1,6 @@
 package at.ac.fhcampuswien.fhmdb;
 
+import at.ac.fhcampuswien.fhmdb.exceptions.MovieApiException;
 import at.ac.fhcampuswien.fhmdb.models.Genre;
 import at.ac.fhcampuswien.fhmdb.models.Movie;
 import at.ac.fhcampuswien.fhmdb.models.Screen;
@@ -15,6 +16,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.VBox;
 //import java.stream.Collectors;
 
 import java.io.IOException;
@@ -74,9 +76,7 @@ public class HomeController implements Initializable {
 
     public void initializeState()
     {
-        allMovies = Movie.initializeMovies();
-        observableMovies.clear();
-        observableMovies.addAll(allMovies); // add all movies to the observable list
+        searchAPIForMovies(null, null, null, null);
         sortedState = SortedState.NONE;
     }
 
@@ -179,27 +179,30 @@ public class HomeController implements Initializable {
         observableMovies.addAll(filteredMovies);
     }
 
-    public void searchAPIForMovies(String searchQuery, Object genre, Integer year, Double rating)
-    {
-
+    public void searchAPIForMovies(String searchQuery, Object genre, Integer year, Double rating) {
         MovieAPI movieAPI = new MovieAPI();
 
         String url = movieAPI.generateRequestString(searchQuery, genre, year, rating);
 
         try {
+            allMovies = movieAPI.getMoviesRequest(url);
 
-            List<Movie> filteredMovies = movieAPI.getRequest(url);
             // update the ui with the list returned from the request
-            if (filteredMovies.isEmpty()) {
+            if (allMovies.isEmpty()) {
                 Label label = new Label("No results found");
+                label.getStyleClass().add("error-screen");
                 movieListView.setPlaceholder(label);
                 observableMovies.clear(); // Clear any existing movie data
             } else {
                 observableMovies.clear();
-                observableMovies.addAll(filteredMovies);
+                observableMovies.addAll(allMovies);
             }
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (MovieApiException e) {
+            // TODO try to access movies cached in database, else show on UI that there was a problem
+            observableMovies.clear();
+            Label message = new Label("Oopsie Woopsie! It seems there was a problem: " + e.getMessage());
+            message.getStyleClass().add("error-screen");
+            movieListView.setPlaceholder(message);
         }
     }
 

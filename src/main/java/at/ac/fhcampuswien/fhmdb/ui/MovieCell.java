@@ -68,7 +68,7 @@ public class MovieCell extends ListCell<Movie> {
             textLayout.spacingProperty().set(10);
             textLayout.alignmentProperty().set(javafx.geometry.Pos.CENTER_LEFT);
 
-            // Exercise 3: new Button to add or remove movies to from watchlist
+            // Exercise 3: new Button to add or remove movies from watchlist
             watchlistBtn.getStyleClass().add("background-blue");
 
             HBox.setHgrow(layoutFill, Priority.ALWAYS); // this makes the watchlistBtn stick to the right end of the screen

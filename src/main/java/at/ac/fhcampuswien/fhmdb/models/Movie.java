@@ -1,10 +1,9 @@
 package at.ac.fhcampuswien.fhmdb.models;
 
 import at.ac.fhcampuswien.fhmdb.MovieAPI;
+import at.ac.fhcampuswien.fhmdb.exceptions.MovieApiException;
 
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class Movie {
@@ -134,9 +133,9 @@ public class Movie {
     public static List<Movie> initializeMovies(){
         MovieAPI movieAPI = new MovieAPI();
         try {
-            return movieAPI.getRequest(movieAPI.generateRequestString());
-        }catch (IOException ex){
-            ex.printStackTrace();
+            return movieAPI.getMoviesRequest(movieAPI.generateRequestString());
+        }catch (MovieApiException e){
+            // initial API request failed TODO: load cached movies from the database UPDATE: this method is now redundant, API call only happens in HomeController so all exceptions can be handled at one place
         }
 
         return new ArrayList<>();

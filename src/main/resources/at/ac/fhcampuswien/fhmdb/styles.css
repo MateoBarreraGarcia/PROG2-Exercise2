@@ -52,3 +52,8 @@
     -fx-background-color: #65b2ef;
     -fx-text-fill: #000000;
 }
+
+.error-screen {
+    -fx-padding: 30;
+    -fx-font-size: 20;
+}

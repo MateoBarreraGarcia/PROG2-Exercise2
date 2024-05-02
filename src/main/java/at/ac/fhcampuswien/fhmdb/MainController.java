@@ -22,35 +22,36 @@ public class MainController {
     Button aboutBtn;
 
     public void initialize() {
-        System.out.println("Main view started");
         loadHomeView();
     }
 
-    public void setContentView(String fxml) {
+    public boolean setContentView(String fxml){
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource(fxml));
         try {
             mainPane.setCenter(fxmlLoader.load());
+            return true;
         } catch (IOException e) {
-            System.out.println("An error occured while loading fxml: " + fxml);
+            System.out.println("An error occurred while loading fxml: " + fxml);
         }
+        return false;
     }
 
     public void loadHomeView() {
-        setContentView(Screen.HOME.path);
+        if (!setContentView(Screen.HOME.path)) return;
         watchlistBtn.getStyleClass().remove("nav-btn-selected");
         aboutBtn.getStyleClass().remove("nav-btn-selected");
         homeBtn.getStyleClass().add("nav-btn-selected");
     }
 
     public void loadWatchlistView() {
-        setContentView(Screen.WATCHLIST.path);
+        if (!setContentView(Screen.WATCHLIST.path)) return;
         homeBtn.getStyleClass().remove("nav-btn-selected");
         aboutBtn.getStyleClass().remove("nav-btn-selected");
         watchlistBtn.getStyleClass().add("nav-btn-selected");
     }
 
     public void loadAboutView() {
-        setContentView(Screen.ABOUT.path);
+        if (!setContentView(Screen.ABOUT.path)) return;
         homeBtn.getStyleClass().remove("nav-btn-selected");
         watchlistBtn.getStyleClass().remove("nav-btn-selected");
         aboutBtn.getStyleClass().add("nav-btn-selected");
