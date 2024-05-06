@@ -5,6 +5,7 @@ import com.j256.ormlite.jdbc.JdbcConnectionSource;
 import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.table.TableUtils;
 
+
 import java.sql.SQLException;
 
 public class DatabaseManager {
@@ -12,9 +13,9 @@ public class DatabaseManager {
     public static final String USER = "user";
     public static final String PASSWORD = "pass";
 
-    private ConnectionSource connectionSource;
-    protected Dao<MovieEntity, Integer> dao;
-
+    private  static ConnectionSource connectionSource;
+    private Dao<MovieEntity, Long> movieDao;
+    private Dao<WatchlistMovieEntity, Long> watchlistDao;
     private static DatabaseManager instance;
 
     private DatabaseManager() {
@@ -35,13 +36,17 @@ public class DatabaseManager {
         return instance;
     }
 
-
-    public Dao<MovieEntity, Integer> getDao() {
-        return dao;
+    public Dao<MovieEntity, Long> getMovieDao() {
+        return movieDao;
     }
 
-    private void createTables() throws SQLException {
+    public Dao<WatchlistMovieEntity, Long> getWatchlistDao() {
+        return watchlistDao;
+    }
+
+    private static void createTables() throws SQLException {
         TableUtils.createTableIfNotExists(connectionSource, MovieEntity.class);
+        TableUtils.createTableIfNotExists(connectionSource, WatchlistMovieEntity.class);
     }
 
     private void createConnectionSource() throws SQLException {
@@ -49,7 +54,14 @@ public class DatabaseManager {
     }
 
     private void initializeDao() throws SQLException {
-        dao = DaoManager.createDao(connectionSource, MovieEntity.class);
+        movieDao = DaoManager.createDao(connectionSource, MovieEntity.class);
+        watchlistDao = DaoManager.createDao(connectionSource, WatchlistMovieEntity.class);
     }
+    public void testDB() throws SQLException {
+        MovieEntity movie=new MovieEntity("37z374","title", "description","genres",2015, 8.8, "imgURL", 120);
+        movieDao.create(movie);
+    }
+
+
 }
 

@@ -34,6 +34,17 @@ public class Movie {
         this.rating = rating;
     }
 
+    public Movie(String title, String description, List<Genre> genres, String id, int releaseYear, String imgUrl, int lengthInMinutes, double rating) {
+        this.title = title;
+        this.description = description;
+        this.genres = genres;
+        this.id = id;
+        this.releaseYear = releaseYear;
+        this.imgUrl = imgUrl;
+        this.lengthInMinutes = lengthInMinutes;
+        this.rating = rating;
+    }
+
     @Override
     public boolean equals(Object obj) {
         if(obj == null) {

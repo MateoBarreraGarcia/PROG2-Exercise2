@@ -1,5 +1,6 @@
 package at.ac.fhcampuswien.fhmdb.database;
 
+import at.ac.fhcampuswien.fhmdb.models.Movie;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.DaoManager;
 import com.j256.ormlite.support.ConnectionSource;
@@ -9,27 +10,27 @@ import java.util.List;
 
 public class MovieRepository {
 
-    private Dao<MovieEntity, Integer> movieDao;
+    private Dao<MovieEntity, Long> movieDao;
 
-    public MovieRepository(ConnectionSource connectionSource) throws SQLException {
-        movieDao = DaoManager.createDao(connectionSource, MovieEntity.class);
+    public MovieRepository() {
+        this.movieDao = DatabaseManager.getInstance().getMovieDao();
     }
 
-    public List<MovieEntity> getAllMovies() throws SQLException {
-        return movieDao.queryForAll();
+    public List<Movie> getAllMovies() throws SQLException {
+        return MovieEntity.toMovies(movieDao.queryForAll());
     }
 
     public int removeAll() throws SQLException {
         return movieDao.deleteBuilder().delete();
     }
 
-    public MovieEntity getMovie(int id) throws SQLException {
-        return movieDao.queryForId(id);
+    public Movie getMovie(String apiID) throws SQLException {
+        return MovieEntity.toMovie((MovieEntity) movieDao.queryForEq("apiID", apiID));
     }
 
-    public int addAllMovies(List<MovieEntity> movies) throws SQLException {
+    public int addAllMovies(List<Movie> movies) throws SQLException {
         int count = 0;
-        for (MovieEntity movie : movies) {
+        for (MovieEntity movie : MovieEntity.fromMovies(movies)) {
             count += movieDao.create(movie);
         }
         return count;
