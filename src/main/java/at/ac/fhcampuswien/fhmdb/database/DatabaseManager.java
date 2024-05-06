@@ -57,10 +57,6 @@ public class DatabaseManager {
         movieDao = DaoManager.createDao(connectionSource, MovieEntity.class);
         watchlistDao = DaoManager.createDao(connectionSource, WatchlistMovieEntity.class);
     }
-    public void testDB() throws SQLException {
-        MovieEntity movie=new MovieEntity("37z374","title", "description","genres",2015, 8.8, "imgURL", 120);
-        movieDao.create(movie);
-    }
 
 
 }
