@@ -59,7 +59,7 @@ public class WatchlistRepository {
         try {
             // TODO: For some reason the return 0 does not get trggered when the getApiID is the same
             for (WatchlistMovieEntity movieEntety : getWatchList()) {
-                if (movieEntety.getApiID() == watchlistMovieEntity.getApiID()) return 0;
+                if (movieEntety.getApiID().equals(watchlistMovieEntity.getApiID())) return 0;
             }
 
             watchlistDao.create(watchlistMovieEntity);
