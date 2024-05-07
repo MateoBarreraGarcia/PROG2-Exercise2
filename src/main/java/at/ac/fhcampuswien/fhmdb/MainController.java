@@ -22,7 +22,7 @@ public class MainController {
     Button aboutBtn;
 
     public void initialize() {
-        loadHomeView();
+        loadHomeView(); // when the app is started the home screen is first initialized
     }
 
     public boolean setContentView(String fxml){
@@ -35,6 +35,11 @@ public class MainController {
         }
         return false;
     }
+
+    /*
+    The following three methods call setContentView with the corresponding fxml file path to load the new fxml into the scene
+    After the fxml load was successful the nav buttons are updated to show on what page the user is
+     */
 
     public void loadHomeView() {
         if (!setContentView(Screen.HOME.path)) return;

@@ -27,22 +27,6 @@ public class MovieCell extends ListCell<Movie> {
     private final Region layoutFill = new Region();
     private final HBox mainLayout = new HBox(textLayout, layoutFill, watchlistBtn);
 
-    public MovieCell(Screen screen) {
-        if (screen == Screen.HOME) watchlistBtn.setText("Add to Watchlist");
-        else if (screen == Screen.WATCHLIST) watchlistBtn.setText("Remove");
-    }
-
-    public MovieCell(ClickEventHandler addToWatchlistClicked) throws DatabaseException {
-        super();
-        watchlistBtn.setOnMouseClicked(mouseEvent -> {
-            try {
-                addToWatchlistClicked.onClick(getItem());
-            } catch (DatabaseException dbe) {
-                new HomeController().printErrorMassage(dbe.getMessage());
-            }
-        });
-    }
-
     public MovieCell(Screen screen, ClickEventHandler watchlistClicked) throws DatabaseException {
         if (screen == Screen.HOME) watchlistBtn.setText("Add to Watchlist");
         else if (screen == Screen.WATCHLIST) watchlistBtn.setText("Remove");

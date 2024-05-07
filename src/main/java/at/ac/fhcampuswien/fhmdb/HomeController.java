@@ -1,8 +1,6 @@
 package at.ac.fhcampuswien.fhmdb;
 
 import at.ac.fhcampuswien.fhmdb.Interfaces.ClickEventHandler;
-import at.ac.fhcampuswien.fhmdb.database.DatabaseManager;
-import at.ac.fhcampuswien.fhmdb.database.MovieEntity;
 import at.ac.fhcampuswien.fhmdb.database.MovieRepository;
 import at.ac.fhcampuswien.fhmdb.database.WatchlistRepository;
 import at.ac.fhcampuswien.fhmdb.exceptions.DatabaseException;
@@ -12,11 +10,7 @@ import at.ac.fhcampuswien.fhmdb.models.Movie;
 import at.ac.fhcampuswien.fhmdb.models.Screen;
 import at.ac.fhcampuswien.fhmdb.models.SortedState;
 import at.ac.fhcampuswien.fhmdb.ui.MovieCell;
-import at.ac.fhcampuswien.fhmdb.database.MovieEntity;
 //import at.ac.fhcampuswien.fhmdb.database.WatchlistRepository;
-import at.ac.fhcampuswien.fhmdb.database.WatchlistMovieEntity;
-import com.j256.ormlite.jdbc.JdbcConnectionSource;
-import com.j256.ormlite.support.ConnectionSource;
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXComboBox;
 import com.jfoenix.controls.JFXListView;
@@ -24,20 +18,12 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
-import javafx.scene.layout.VBox;
-import javafx.stage.Stage;
-import javafx.scene.Node;
 //import java.stream.Collectors;
 
-import java.io.IOException;
 import java.net.URL;
-import java.sql.SQLException;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -61,8 +47,6 @@ public class HomeController implements Initializable {
 
     @FXML
     public JFXButton sortBtn;
-    @FXML
-    private JFXButton watchlistBtn;
 
     public List<Movie> allMovies;
 
@@ -86,47 +70,6 @@ public class HomeController implements Initializable {
     private String yearFilerNoFilter = "No Year filter";
     private String ratingFilerNoFilter = "No Rating filter";
 
-    //database
-    //
-    /*@FXML
-    public void switchToWatchlist(ActionEvent event) throws IOException {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("watchlist-view.fxml"));
-        Parent watchlistRoot = loader.load();
-        Scene watchlistScene = new Scene(watchlistRoot);
-
-        Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-        stage.setScene(watchlistScene);
-        stage.show();
-    }
-    public ConnectionSource createConnectionSource() throws SQLException {
-        // Beispiel-URL, ersetzen Sie dies durch Ihre tatsächliche Datenbank-URL
-        String databaseUrl = "jdbc:h2:file:./db/contactsdb";
-        String user = "user";
-        String password = "pass";
-        return new JdbcConnectionSource(databaseUrl, user, password);
-    }
-    public WatchlistRepository createWatchlistRepository() throws SQLException {
-        ConnectionSource connectionSource = createConnectionSource();
-        return new WatchlistRepository(connectionSource);
-    }
-    protected final AddToWatchlistEventHandler<Movie> AddToWatchlistClicked = movie -> {
-        try {
-            WatchlistRepository watchlistRepository = new WatchlistRepository();
-            List<String> genreList = movie.getGenres();
-            WatchlistMovieEntity watchlistMovie = new WatchlistMovieEntity(
-                    movie.getApiID(),
-                    movie.getTitle(),
-                    movie.getDescription(),
-                    MovieEntity.genresToString(genreList),
-                    movie.getReleaseYear(),
-                    movie.getRating()
-            );
-            watchlistRepository.addToWatchList(watchlistMovie);
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-    };*/
-
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle)
     {
@@ -139,15 +82,6 @@ public class HomeController implements Initializable {
         searchAPIForMovies(null, null, null, null);
 
         sortedState = SortedState.NONE;
-
-       /* try {
-            ConnectionSource connectionSource = createConnectionSource();
-            WatchlistRepository watchlistRepository = createWatchlistRepository();
-            // Andere Initialisierungen ...
-        } catch (SQLException e) {
-            // Fehlerbehandlung für Datenbankverbindungsprobleme
-            e.printStackTrace();
-        }*/
     }
 
     public void initializeLayout()
@@ -263,18 +197,16 @@ public class HomeController implements Initializable {
 
         try {
             List<Movie> movieList = movieAPI.getMoviesRequest(url);
-            updateallMovieList(movieList);
+            updateAllMoviesList(movieList);
 
-            // Fill cash only when all Movies are requested
+            // Fill cache only when all Movies are requested
             if(searchQuery == null && genre == null && year == null && rating == null) {
                 MovieRepository movieRepository = new MovieRepository();
                 movieRepository.removeAll();
                 movieRepository.addAllMovies(movieList);
             }
         } catch (MovieApiException e) {
-            // API failed
-            //printErrorMassage(e.getMessage());    // TODO: Show an Error Massage which indicates that the Internet has failed and the Data is no longer up to date
-
+            // API call failed, try to load movies from the database
             try {
                 List<Movie> movieList = new MovieRepository().getAllMovies();
 
@@ -284,13 +216,13 @@ public class HomeController implements Initializable {
                 if(year != null) movieList.stream().filter(x -> x.getReleaseYear() == year);
                 if(rating != null) movieList.stream().filter(x -> x.getRating() == rating);
 
-                updateallMovieList(movieList);
+                updateAllMoviesList(movieList);
             }catch (DatabaseException dde){
                 // API and SQL Server failed
                 printErrorMassage(dde.getMessage());
             }
         }catch (DatabaseException dde){
-            // Cash could not be filled
+            // Cache could not be filled
             printErrorMassage(dde.getMessage());
         }
     }
@@ -302,7 +234,7 @@ public class HomeController implements Initializable {
         movieListView.setPlaceholder(message);
     }
 
-    private void updateallMovieList(List<Movie> movies){
+    private void updateAllMoviesList(List<Movie> movies){
         allMovies = movies;
 
         // update the ui with the list returned from the request

@@ -20,37 +20,34 @@ public class WatchlistController {
     @FXML
     public JFXListView movieListView;
 
-    private static WatchlistController watchlistController;
-
     protected ObservableList<Movie> observableMovies = FXCollections.observableArrayList();
 
-    public WatchlistController(){}
-
-    public static synchronized WatchlistController getInstance() {
-        if (watchlistController == null) {
-            watchlistController = new WatchlistController();
-        }
-        return watchlistController;
-    }
-
-    public void initialize() throws DatabaseException
+    public void initialize()
     {
         initializeState();
         initializeLayout();
     }
 
-    public void updateWatchlistScreen() throws DatabaseException
+    public void updateWatchlistScreen()
     {
         observableMovies.clear();
-        observableMovies.addAll(new WatchlistRepository().getWatchListMovieList());
+        try {
+            observableMovies.addAll(new WatchlistRepository().getWatchListMovieList());
+        } catch (DatabaseException e) {
+            printErrorMassage(e.getMessage());
+        }
     }
 
-    public void initializeState() throws DatabaseException
+    public void initializeState()
     {
-        observableMovies.addAll(new WatchlistRepository().getWatchListMovieList());
+        try {
+            observableMovies.addAll(new WatchlistRepository().getWatchListMovieList());
+        } catch (DatabaseException e) {
+            printErrorMassage(e.getMessage());
+        }
     }
 
-    public void initializeLayout() throws DatabaseException
+    public void initializeLayout()
     {
         movieListView.setItems(observableMovies);
         movieListView.setCellFactory(movieListView -> {
