@@ -1,8 +1,11 @@
 package at.ac.fhcampuswien.fhmdb.database;
+import at.ac.fhcampuswien.fhmdb.models.Movie;
 import at.ac.fhcampuswien.fhmdb.models.Genre;
 import at.ac.fhcampuswien.fhmdb.models.Movie;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
+
+import java.util.List;
 
 import java.util.ArrayList;
 import java.util.List;

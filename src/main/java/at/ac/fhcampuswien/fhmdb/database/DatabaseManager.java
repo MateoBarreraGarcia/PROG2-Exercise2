@@ -13,9 +13,10 @@ public class DatabaseManager {
     public static final String USER = "user";
     public static final String PASSWORD = "pass";
 
-    private  static ConnectionSource connectionSource;
+    private static ConnectionSource connectionSource;
     private Dao<MovieEntity, Long> movieDao;
     private Dao<WatchlistMovieEntity, Long> watchlistDao;
+
     private static DatabaseManager instance;
 
     private DatabaseManager() {

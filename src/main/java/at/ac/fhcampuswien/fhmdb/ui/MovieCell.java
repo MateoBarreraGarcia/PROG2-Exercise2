@@ -1,5 +1,9 @@
 package at.ac.fhcampuswien.fhmdb.ui;
 
+import at.ac.fhcampuswien.fhmdb.HomeController;
+import at.ac.fhcampuswien.fhmdb.Interfaces.ClickEventHandler;
+import at.ac.fhcampuswien.fhmdb.WatchlistController;
+import at.ac.fhcampuswien.fhmdb.exceptions.DatabaseException;
 import at.ac.fhcampuswien.fhmdb.models.Movie;
 import at.ac.fhcampuswien.fhmdb.models.Screen;
 import javafx.geometry.Insets;
@@ -25,6 +29,43 @@ public class MovieCell extends ListCell<Movie> {
     public MovieCell(Screen screen) {
         if (screen == Screen.HOME) watchlistBtn.setText("Add to Watchlist");
         else if (screen == Screen.WATCHLIST) watchlistBtn.setText("Remove");
+    }
+
+    public MovieCell(ClickEventHandler addToWatchlistClicked) throws DatabaseException
+    {
+        super();
+        watchlistBtn.setOnMouseClicked(mouseEvent -> {
+            try {
+                addToWatchlistClicked.onClick(getItem());
+            } catch (DatabaseException dbe) {
+                new HomeController().printErrorMassage(dbe.getMessage());
+            }
+        });
+    }
+
+    public MovieCell(Screen screen, ClickEventHandler addToWatchlistClicked) throws DatabaseException {
+        if (screen == Screen.HOME){
+            watchlistBtn.setText("Add to Watchlist");
+            watchlistBtn.setOnMouseClicked(mouseEvent -> {
+                try {
+                    addToWatchlistClicked.onClick(getItem());
+                    WatchlistController.getInstance().updateWatchlist();
+                } catch (DatabaseException dbe) {
+                    new HomeController().printErrorMassage(dbe.getMessage());
+                }
+            });
+        }
+        else if (screen == Screen.WATCHLIST) {
+            watchlistBtn.setText("Remove");
+            watchlistBtn.setOnMouseClicked(mouseEvent -> {
+                try {
+                    WatchlistController.getInstance().onRemoveFromWatchlistClicked.onClick(getItem());
+                    WatchlistController.getInstance().updateWatchlist();
+                } catch (DatabaseException dbe) {
+                    new HomeController().printErrorMassage(dbe.getMessage());
+                }
+            });
+        }
     }
 
     @Override

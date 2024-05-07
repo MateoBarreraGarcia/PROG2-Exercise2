@@ -27,3 +27,10 @@ Maven uses the default system Java installation. If you have multiple Java insta
 
 ### Run the tests
 Run automated tests by running `mvn clean test` command in Maven.
+
+
+
+
+TODO:
+Update UI when Movie gets removed from the Watchlist
+Prevent the adding of teh same movie to the watch list again

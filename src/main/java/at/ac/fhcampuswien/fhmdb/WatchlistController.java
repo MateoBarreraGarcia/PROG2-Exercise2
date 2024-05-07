@@ -1,5 +1,9 @@
 package at.ac.fhcampuswien.fhmdb;
 
+import at.ac.fhcampuswien.fhmdb.Interfaces.ClickEventHandler;
+import at.ac.fhcampuswien.fhmdb.database.DatabaseManager;
+import at.ac.fhcampuswien.fhmdb.database.WatchlistRepository;
+import at.ac.fhcampuswien.fhmdb.exceptions.DatabaseException;
 import at.ac.fhcampuswien.fhmdb.models.Genre;
 import at.ac.fhcampuswien.fhmdb.models.Movie;
 import at.ac.fhcampuswien.fhmdb.models.Screen;
@@ -16,23 +20,50 @@ public class WatchlistController {
     @FXML
     public JFXListView movieListView;
 
+    private static WatchlistController watchlistController;
+
     protected ObservableList<Movie> observableMovies = FXCollections.observableArrayList();
 
-    public void initialize() {
+    private WatchlistController(){}
+
+    public static synchronized WatchlistController getInstance() {
+        if (watchlistController == null) {
+            watchlistController = new WatchlistController();
+        }
+        return watchlistController;
+    }
+
+    public void initialize() throws DatabaseException
+    {
         initializeState();
         initializeLayout();
     }
 
-    public void initializeState() {
-        observableMovies.addAll(getDummyWatchlistData());
+    public void updateWatchlist() throws DatabaseException
+    {
+        // TODO: Update Watchlist UI
     }
 
-    public void initializeLayout() {
+    public void initializeState() throws DatabaseException
+    {
+        observableMovies.addAll(new WatchlistRepository().getWatchListMovieList());
+    }
+
+    public void initializeLayout() throws DatabaseException
+    {
         movieListView.setItems(observableMovies);
-        movieListView.setCellFactory(movieListView -> new MovieCell(Screen.WATCHLIST));
+        movieListView.setCellFactory(movieListView -> {
+            try {
+                return new MovieCell(Screen.WATCHLIST, onRemoveFromWatchlistClicked);
+            } catch (DatabaseException dbe) {
+                new HomeController().printErrorMassage(dbe.getMessage());
+                return null;
+            }
+        });
     }
 
-    private List<Movie> getDummyWatchlistData() {
+    private List<Movie> getDummyWatchlistData()
+    {
         return Arrays.asList(
                 new Movie("Interstellar",
                         "When Earth becomes uninhabitable in the future, a farmer and ex-NASA pilot, Joseph Cooper, is tasked to pilot a spacecraft, along with a team of researchers, to find a new planet for humans.",
@@ -60,4 +91,10 @@ public class WatchlistController {
                         Arrays.asList("Roger Allers", "Rob Minkoff"), Arrays.asList("Irene Mecchi", "Jonathan Roberts", "Linda Woolverton"),
                         Arrays.asList("Matthew Broderick", "Jeremy Irons", "James Earl Jones"), 8.5));
     }
+
+    public final ClickEventHandler onRemoveFromWatchlistClicked = (clickedItem) -> {
+        WatchlistRepository watchlistRepository = new WatchlistRepository();
+        Movie movie = (Movie) clickedItem;
+        watchlistRepository.removeFromWatchlist(movie.getId());
+    };
 }

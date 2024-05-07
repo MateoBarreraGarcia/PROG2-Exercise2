@@ -1,5 +1,11 @@
 package at.ac.fhcampuswien.fhmdb;
 
+import at.ac.fhcampuswien.fhmdb.Interfaces.ClickEventHandler;
+import at.ac.fhcampuswien.fhmdb.database.DatabaseManager;
+import at.ac.fhcampuswien.fhmdb.database.MovieEntity;
+import at.ac.fhcampuswien.fhmdb.database.MovieRepository;
+import at.ac.fhcampuswien.fhmdb.database.WatchlistRepository;
+import at.ac.fhcampuswien.fhmdb.exceptions.DatabaseException;
 import at.ac.fhcampuswien.fhmdb.exceptions.MovieApiException;
 import at.ac.fhcampuswien.fhmdb.models.Genre;
 import at.ac.fhcampuswien.fhmdb.models.Movie;
@@ -131,6 +137,7 @@ public class HomeController implements Initializable {
     public void initializeState()
     {
         searchAPIForMovies(null, null, null, null);
+
         sortedState = SortedState.NONE;
 
        /* try {
@@ -146,7 +153,14 @@ public class HomeController implements Initializable {
     public void initializeLayout()
     {
         movieListView.setItems(observableMovies);   // set the items of the listview to the observable list
-        movieListView.setCellFactory(movieListView -> new MovieCell(Screen.HOME)); // apply custom cells to the listview
+            movieListView.setCellFactory(movieListView -> {
+                try {
+                    return new MovieCell(Screen.HOME, onAddToWatchlistClicked); // apply custom cells to the listview
+                } catch (DatabaseException dbe) {
+                    printErrorMassage(dbe.getMessage());
+                    return null;
+                }
+            });
 
         Object[] genres = Genre.values();   // get all genres
         //genreComboBox.getItems().add("No Genre filter");  // add "no filter" to the combobox
@@ -248,24 +262,58 @@ public class HomeController implements Initializable {
         String url = movieAPI.generateRequestString(searchQuery, genre, year, rating);
 
         try {
-            allMovies = movieAPI.getMoviesRequest(url);
+            List<Movie> movieList = movieAPI.getMoviesRequest(url);
+            updateallMovieList(movieList);
 
-            // update the ui with the list returned from the request
-            if (allMovies.isEmpty()) {
-                Label label = new Label("No results found");
-                label.getStyleClass().add("error-screen");
-                movieListView.setPlaceholder(label);
-                observableMovies.clear(); // Clear any existing movie data
-            } else {
-                observableMovies.clear();
-                observableMovies.addAll(allMovies);
+            // Fill cash only when all Movies are requested
+            if(searchQuery == null && genre == null && year == null && rating == null) {
+                MovieRepository movieRepository = new MovieRepository();
+                movieRepository.removeAll();
+                movieRepository.addAllMovies(movieList);
             }
         } catch (MovieApiException e) {
-            // TODO try to access movies cached in database, else show on UI that there was a problem
+            // API failed
+            //printErrorMassage(e.getMessage());    // TODO: Show an Error Massage which indicates that the Internet has failed and the Data is no longer up to date
+
+            try {
+                List<Movie> movieList = new MovieRepository().getAllMovies();
+
+                // Filter when API does not work
+                if(searchQuery != null) movieList.stream().filter(x -> x.getTitle().contains(searchQuery) || x.getDescription().contains(searchQuery));
+                if(genre != null) movieList.stream().filter(x -> x.getGenres().contains(genre));
+                if(year != null) movieList.stream().filter(x -> x.getReleaseYear() == year);
+                if(rating != null) movieList.stream().filter(x -> x.getRating() == rating);
+
+                updateallMovieList(movieList);
+            }catch (DatabaseException dde){
+                // API and SQL Server failed
+                printErrorMassage(dde.getMessage());
+            }
+        }catch (DatabaseException dde){
+            // Cash could not be filled
+            printErrorMassage(dde.getMessage());
+        }
+    }
+
+    public void printErrorMassage(String errorMassage){
+        observableMovies.clear();
+        Label message = new Label("Oopsie Woopsie! It seems there was a problem: " + errorMassage);
+        message.getStyleClass().add("error-screen");
+        movieListView.setPlaceholder(message);
+    }
+
+    private void updateallMovieList(List<Movie> movies){
+        allMovies = movies;
+
+        // update the ui with the list returned from the request
+        if (allMovies.isEmpty()) {
+            Label label = new Label("No results found");
+            label.getStyleClass().add("error-screen");
+            movieListView.setPlaceholder(label);
+            observableMovies.clear(); // Clear any existing movie data
+        } else {
             observableMovies.clear();
-            Label message = new Label("Oopsie Woopsie! It seems there was a problem: " + e.getMessage());
-            message.getStyleClass().add("error-screen");
-            movieListView.setPlaceholder(message);
+            observableMovies.addAll(allMovies);
         }
     }
 
@@ -345,4 +393,14 @@ public class HomeController implements Initializable {
                 .max(Map.Entry.comparingByValue())  // Gets the element with the highest number
                 .map(Map.Entry::getKey).orElse("").toString();  // Returns the key of the element with the highest number
     }
+
+    private final ClickEventHandler onAddToWatchlistClicked = (clickedItem) -> {
+        WatchlistRepository watchlistRepository = new WatchlistRepository();
+        try {
+            Movie movie = (Movie) clickedItem;
+            watchlistRepository.addToWatchList(movie);
+        }catch(ClassCastException cce){
+            throw new DatabaseException(cce.getMessage(), cce.getCause());
+        }
+    };
 }
