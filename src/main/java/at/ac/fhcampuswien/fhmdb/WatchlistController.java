@@ -1,7 +1,6 @@
 package at.ac.fhcampuswien.fhmdb;
 
 import at.ac.fhcampuswien.fhmdb.Interfaces.ClickEventHandler;
-import at.ac.fhcampuswien.fhmdb.database.DatabaseManager;
 import at.ac.fhcampuswien.fhmdb.database.WatchlistRepository;
 import at.ac.fhcampuswien.fhmdb.exceptions.DatabaseException;
 import at.ac.fhcampuswien.fhmdb.models.Genre;
@@ -12,6 +11,7 @@ import com.jfoenix.controls.JFXListView;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.scene.control.Label;
 
 import java.util.Arrays;
 import java.util.List;
@@ -24,7 +24,7 @@ public class WatchlistController {
 
     protected ObservableList<Movie> observableMovies = FXCollections.observableArrayList();
 
-    private WatchlistController(){}
+    public WatchlistController(){}
 
     public static synchronized WatchlistController getInstance() {
         if (watchlistController == null) {
@@ -39,9 +39,10 @@ public class WatchlistController {
         initializeLayout();
     }
 
-    public void updateWatchlist() throws DatabaseException
+    public void updateWatchlistScreen() throws DatabaseException
     {
-        // TODO: Update Watchlist UI
+        observableMovies.clear();
+        observableMovies.addAll(new WatchlistRepository().getWatchListMovieList());
     }
 
     public void initializeState() throws DatabaseException
@@ -56,10 +57,17 @@ public class WatchlistController {
             try {
                 return new MovieCell(Screen.WATCHLIST, onRemoveFromWatchlistClicked);
             } catch (DatabaseException dbe) {
-                new HomeController().printErrorMassage(dbe.getMessage());
+                printErrorMassage(dbe.getMessage());
                 return null;
             }
         });
+    }
+
+    public void printErrorMassage(String errorMassage){
+        observableMovies.clear();
+        Label message = new Label("Oopsie Woopsie! It seems there was a problem: " + errorMassage);
+        message.getStyleClass().add("error-screen");
+        movieListView.setPlaceholder(message);
     }
 
     private List<Movie> getDummyWatchlistData()
@@ -96,5 +104,6 @@ public class WatchlistController {
         WatchlistRepository watchlistRepository = new WatchlistRepository();
         Movie movie = (Movie) clickedItem;
         watchlistRepository.removeFromWatchlist(movie.getId());
+        updateWatchlistScreen();
     };
 }
