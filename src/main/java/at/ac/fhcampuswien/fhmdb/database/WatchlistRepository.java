@@ -28,6 +28,7 @@ public class WatchlistRepository {
         this.watchlistDao = DatabaseManager.getInstance().getWatchlistDao();
     }
 
+    //to get all movies in watchlist
     public List<WatchlistMovieEntity> getWatchList() throws DatabaseException
     {
         try {
@@ -37,43 +38,54 @@ public class WatchlistRepository {
         }
     }
 
+    //to get the list of movies on the watchlist
     public List<Movie> getWatchListMovieList() throws DatabaseException
     {
+        //get all movies from database
         List<Movie> allMovies = new MovieRepository().getAllMovies();
         List<Movie> moviesOnWatchList = new ArrayList<>();
         try {
             WatchlistRepository watchlistRepository = new WatchlistRepository();
 
+            //iterate through each movie entry in the watchlist
             for (WatchlistMovieEntity watchMovieEntry : watchlistRepository.getWatchList()) {
+
+                //filter and collect movies on the watchlist from all movies
                 moviesOnWatchList.addAll(allMovies.stream().filter(x -> x.getId() == watchMovieEntry.getApiID()).collect(Collectors.toList()));
             }
         } catch (DatabaseException dbe) {
             throw new DatabaseException(dbe.getMessage(), dbe.getCause());
         }
+        //return the list of movies on the watchlist
         return moviesOnWatchList;
     }
 
+    //to add a movie to the watchlist
     public int addToWatchList(Movie movie) throws DatabaseException
     {
         WatchlistMovieEntity watchlistMovieEntity = new WatchlistMovieEntity(movie.getId());
-        try {
+        try { //check if the movie already exists in the watchlist
             // TODO: For some reason the return 0 does not get trggered when the getApiID is the same
             for (WatchlistMovieEntity movieEntety : getWatchList()) {
                 if (movieEntety.getApiID() == watchlistMovieEntity.getApiID()) return 0;
             }
-
+            //create a new entry in the watchlist for the movie
             watchlistDao.create(watchlistMovieEntity);
         } catch (SQLException sqle) {
             throw new DatabaseException(sqle.getMessage(), sqle.getCause());
         }
+        //return 1 to indicate successful addition
         return 1;
     }
 
     public int removeFromWatchlist(String apiId) throws DatabaseException
     {
         try {
+            // iterate through each movie entry in the watchlist
             for (WatchlistMovieEntity movieEntety : getWatchList()) {
                 if (movieEntety.getApiID() == apiId) {
+
+                    //delete the movie entry from the watchlist
                     watchlistDao.delete(movieEntety);
 
                     //new WatchlistController().updateallMovieListWatchlist(getWatchListMovieList());   // TODO: Update the WatchList after a Movie has been removed
@@ -92,6 +104,7 @@ public class WatchlistRepository {
         } catch (SQLException sqle) {
             throw new DatabaseException(sqle.getMessage(), sqle.getCause());
         }
+        //to return 0 if movie was not found in the watchlist
         return 0;
     }
 }

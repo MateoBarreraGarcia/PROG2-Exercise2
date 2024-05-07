@@ -46,7 +46,7 @@ public class MovieEntity {
         this.imgURL = imgURL;
         this.lengthInMinutes = lengthInMinutes;
     }
-
+    //to convert  list of genres to a string
     public static String genresToString (List<Genre> genres){
         String genreString="";
         for (Genre genre : genres){
@@ -57,6 +57,7 @@ public class MovieEntity {
         }
         return genreString;
     }
+    //to convert list of movies to list of movie entities
     public static List<MovieEntity> fromMovies (List<Movie> movies){
         List<MovieEntity> movieEntities = new ArrayList<>();
         for (Movie movie : movies){
@@ -65,6 +66,7 @@ public class MovieEntity {
 
         return movieEntities;
     }
+    //to convert list of movie entity to list of movie
     public static List <Movie> toMovies (List<MovieEntity> movieEntities){
         List<Movie> movies = new ArrayList<>();
         for (MovieEntity movieEntity : movieEntities) {
@@ -80,6 +82,7 @@ public class MovieEntity {
 
         return new Movie(movieEntity.title, movieEntity.description, genresToList(movieEntity.genres), movieEntity.apiID, movieEntity.releaseYear, movieEntity.imgURL, movieEntity.lengthInMinutes,movieEntity.rating);
     }
+    //to convert string of genres to list of genres
     public static List<Genre> genresToList (String genres){
         List<Genre> genresList = new ArrayList<>();
         for (String s : genres.split(",")){

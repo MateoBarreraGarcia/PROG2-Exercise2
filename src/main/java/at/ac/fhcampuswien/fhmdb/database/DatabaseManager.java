@@ -36,24 +36,24 @@ public class DatabaseManager {
         }
         return instance;
     }
-
+    //to return the DAO for movies
     public Dao<MovieEntity, Long> getMovieDao() {
         return movieDao;
     }
-
+    //to return the Dao for watchlist Movies
     public Dao<WatchlistMovieEntity, Long> getWatchlistDao() {
         return watchlistDao;
     }
-
+    //to create the Database tables if they don`t exist
     private static void createTables() throws SQLException {
         TableUtils.createTableIfNotExists(connectionSource, MovieEntity.class);
         TableUtils.createTableIfNotExists(connectionSource, WatchlistMovieEntity.class);
     }
-
+    //to create the connection to the database
     private void createConnectionSource() throws SQLException {
         connectionSource = new JdbcConnectionSource(URL, USER, PASSWORD);
     }
-
+    //to initialize the DAOs
     private void initializeDao() throws SQLException {
         movieDao = DaoManager.createDao(connectionSource, MovieEntity.class);
         watchlistDao = DaoManager.createDao(connectionSource, WatchlistMovieEntity.class);
