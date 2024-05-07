@@ -67,7 +67,7 @@ public class WatchlistRepository {
         try { //check if the movie already exists in the watchlist
             // TODO: For some reason the return 0 does not get trggered when the getApiID is the same
             for (WatchlistMovieEntity movieEntety : getWatchList()) {
-                if (movieEntety.getApiID() == watchlistMovieEntity.getApiID()) return 0;
+                if (movieEntety.getApiID().equals(watchlistMovieEntity.getApiID())) return 0;
             }
             //create a new entry in the watchlist for the movie
             watchlistDao.create(watchlistMovieEntity);

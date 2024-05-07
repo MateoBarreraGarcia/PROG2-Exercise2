@@ -12,6 +12,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
+
 import java.util.stream.Collectors;
 
 public class MovieCell extends ListCell<Movie> {
@@ -31,8 +32,7 @@ public class MovieCell extends ListCell<Movie> {
         else if (screen == Screen.WATCHLIST) watchlistBtn.setText("Remove");
     }
 
-    public MovieCell(ClickEventHandler addToWatchlistClicked) throws DatabaseException
-    {
+    public MovieCell(ClickEventHandler addToWatchlistClicked) throws DatabaseException {
         super();
         watchlistBtn.setOnMouseClicked(mouseEvent -> {
             try {
@@ -43,29 +43,17 @@ public class MovieCell extends ListCell<Movie> {
         });
     }
 
-    public MovieCell(Screen screen, ClickEventHandler addToWatchlistClicked) throws DatabaseException {
-        if (screen == Screen.HOME){
-            watchlistBtn.setText("Add to Watchlist");
-            watchlistBtn.setOnMouseClicked(mouseEvent -> {
-                try {
-                    addToWatchlistClicked.onClick(getItem());
-                    WatchlistController.getInstance().updateWatchlist();
-                } catch (DatabaseException dbe) {
-                    new HomeController().printErrorMassage(dbe.getMessage());
-                }
-            });
-        }
-        else if (screen == Screen.WATCHLIST) {
-            watchlistBtn.setText("Remove");
-            watchlistBtn.setOnMouseClicked(mouseEvent -> {
-                try {
-                    WatchlistController.getInstance().onRemoveFromWatchlistClicked.onClick(getItem());
-                    WatchlistController.getInstance().updateWatchlist();
-                } catch (DatabaseException dbe) {
-                    new HomeController().printErrorMassage(dbe.getMessage());
-                }
-            });
-        }
+    public MovieCell(Screen screen, ClickEventHandler watchlistClicked) throws DatabaseException {
+        if (screen == Screen.HOME) watchlistBtn.setText("Add to Watchlist");
+        else if (screen == Screen.WATCHLIST) watchlistBtn.setText("Remove");
+
+        watchlistBtn.setOnMouseClicked(mouseEvent -> {
+            try {
+                watchlistClicked.onClick(getItem());
+            } catch (DatabaseException dbe) {
+                new HomeController().printErrorMassage(dbe.getMessage());
+            }
+        });
     }
 
     @Override
