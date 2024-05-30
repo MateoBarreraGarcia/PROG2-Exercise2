@@ -1,6 +1,7 @@
 package at.ac.fhcampuswien.fhmdb;
 
 import at.ac.fhcampuswien.fhmdb.Interfaces.ClickEventHandler;
+import at.ac.fhcampuswien.fhmdb.builders.MovieAPIRequestBuilder;
 import at.ac.fhcampuswien.fhmdb.database.MovieRepository;
 import at.ac.fhcampuswien.fhmdb.database.WatchlistRepository;
 import at.ac.fhcampuswien.fhmdb.exceptions.DatabaseException;
@@ -79,7 +80,8 @@ public class HomeController implements Initializable {
 
     public void initializeState()
     {
-        searchAPIForMovies(null, null, null, null);
+        String url = new MovieAPIRequestBuilder(MovieAPIRequestBuilder.ALL_MOVIES_PATH).build();
+        searchAPIForMovies(url);
 
         sortedState = SortedState.NONE;
     }
@@ -190,17 +192,15 @@ public class HomeController implements Initializable {
         observableMovies.addAll(filteredMovies);
     }
 
-    public void searchAPIForMovies(String searchQuery, Object genre, Integer year, Double rating) {
+    public void searchAPIForMovies(String url) {
         MovieAPI movieAPI = new MovieAPI();
-
-        String url = movieAPI.generateRequestString(searchQuery, genre, year, rating);
 
         try {
             List<Movie> movieList = movieAPI.getMoviesRequest(url);
             updateAllMoviesList(movieList);
 
             // Fill cache only when all Movies are requested
-            if(searchQuery == null && genre == null && year == null && rating == null) {
+            if(url.equals(MovieAPIRequestBuilder.ALL_MOVIES_PATH)) {
                 MovieRepository movieRepository = new MovieRepository();
                 movieRepository.removeAll();
                 movieRepository.addAllMovies(movieList);
@@ -211,10 +211,12 @@ public class HomeController implements Initializable {
                 List<Movie> movieList = new MovieRepository().getAllMovies();
 
                 // Filter when API does not work
+                /* 30.5.: commented out for builder refactoring with builder pattern
                 if(searchQuery != null) movieList.stream().filter(x -> x.getTitle().contains(searchQuery) || x.getDescription().contains(searchQuery));
                 if(genre != null) movieList.stream().filter(x -> x.getGenres().contains(genre));
                 if(year != null) movieList.stream().filter(x -> x.getReleaseYear() == year);
                 if(rating != null) movieList.stream().filter(x -> x.getRating() == rating);
+                */
 
                 updateAllMoviesList(movieList);
             }catch (DatabaseException dde){
@@ -276,7 +278,14 @@ public class HomeController implements Initializable {
             return;
         }
 
-        searchAPIForMovies(searchQuery, genre, year, rating);
+        String url = new MovieAPIRequestBuilder(MovieAPIRequestBuilder.ALL_MOVIES_PATH)
+                .query(searchQuery)
+                .genre(genre.toString())
+                .releaseYear(year)
+                .ratingFrom(rating)
+                .build();
+
+        searchAPIForMovies(url);
         sortMovies(sortedState);
     }
 

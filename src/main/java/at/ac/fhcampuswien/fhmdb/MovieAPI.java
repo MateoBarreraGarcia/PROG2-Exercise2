@@ -88,42 +88,6 @@ public class MovieAPI {
             throw new MovieApiException("Parsing of JSON data failed");
         }
     }
-
-    public String generateRequestString() {
-        return "https://prog2.fh-campuswien.ac.at/movies";
-    }
-
-    public String generateRequestString(String query, Object genre, Integer year, Double rating) {
-        StringBuilder url = new StringBuilder(generateRequestString());
-
-        List<String> params = new ArrayList<>();
-
-        if (query != null && !query.isEmpty()) {
-            params.add("query=" + query);
-        }
-        if (genre != null && genre != Genre.ALL_GENRES) {
-            params.add("genre=" + genre);
-        }
-        if (year != null) {
-            params.add("releaseYear=" + year);
-        }
-        if (rating != null) {
-            params.add("ratingFrom=" + rating);
-        }
-
-        if (!params.isEmpty()) { // add the queries to the base url
-            url.append("?");
-            for (String s : params) {
-                if (params.indexOf(s) != 0) {
-                    url.append("&");
-                }
-                url.append(s);
-            }
-        }
-
-        System.out.println(url);
-        return url.toString();
-    }
 }
 
 
