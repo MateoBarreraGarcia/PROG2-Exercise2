@@ -10,7 +10,7 @@ public class MovieAPIRequestBuilder {
 
     private String base;
     private String query;
-    private String genre;
+    private Object genre;
     private Integer releaseYear;
     private Double ratingFrom;
 
@@ -23,7 +23,7 @@ public class MovieAPIRequestBuilder {
         return this;
     }
 
-    public MovieAPIRequestBuilder genre(String genre) {
+    public MovieAPIRequestBuilder genre(Object genre) {
         this.genre = genre;
         return this;
     }
@@ -46,7 +46,7 @@ public class MovieAPIRequestBuilder {
         if (query != null && !query.isEmpty()) {
             params.add("query=" + query);
         }
-        if (genre != null && !genre.equals(Genre.ALL_GENRES.toString())) {
+        if (genre != null && genre != Genre.ALL_GENRES) {
             params.add("genre=" + genre);
         }
         if (releaseYear != null) {

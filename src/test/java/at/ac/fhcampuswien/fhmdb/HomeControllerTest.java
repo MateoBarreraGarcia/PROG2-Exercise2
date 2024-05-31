@@ -3,7 +3,10 @@ package at.ac.fhcampuswien.fhmdb;
 import at.ac.fhcampuswien.fhmdb.models.Genre;
 import at.ac.fhcampuswien.fhmdb.models.Movie;
 import at.ac.fhcampuswien.fhmdb.models.SortedState;
-import com.sun.source.tree.ArrayAccessTree;
+import at.ac.fhcampuswien.fhmdb.states.AscendingState;
+import at.ac.fhcampuswien.fhmdb.states.DescendingState;
+import at.ac.fhcampuswien.fhmdb.states.NoSortingState;
+import com.jfoenix.controls.JFXButton;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
@@ -64,10 +67,11 @@ class HomeControllerTest {
         // given
         homeController.observableMovies.clear();
         homeController.observableMovies.addAll(testMovieData);
-        homeController.sortedState = SortedState.NONE;
+        homeController.changeState(new NoSortingState(homeController));
+        homeController.sortBtn = new JFXButton();
 
         // when
-        homeController.sortMovies();
+        homeController.getSortingState().onSortBtnClicked(); // todo: sortBtn tests not working after state pattern refactoring
 
         // then
         List<Movie> expected = Arrays.asList(
@@ -106,10 +110,10 @@ class HomeControllerTest {
         // given
         homeController.observableMovies.clear();
         homeController.observableMovies.addAll(testMovieData);
-        homeController.sortedState = SortedState.ASCENDING;
+        homeController.changeState(new AscendingState(homeController));
 
         // when
-        homeController.sortMovies();
+        homeController.getSortingState().onSortBtnClicked();
 
         // then
         List<Movie> expected = Arrays.asList(
@@ -148,10 +152,10 @@ class HomeControllerTest {
         // given
         homeController.observableMovies.clear();
         homeController.observableMovies.addAll(testMovieData);
-        homeController.sortedState = SortedState.DESCENDING;
+        homeController.changeState(new DescendingState(homeController));
 
         // when
-        homeController.sortMovies();
+        homeController.getSortingState().onSortBtnClicked();
 
         // then
         List<Movie> expected = Arrays.asList(

@@ -9,7 +9,8 @@ import at.ac.fhcampuswien.fhmdb.exceptions.MovieApiException;
 import at.ac.fhcampuswien.fhmdb.models.Genre;
 import at.ac.fhcampuswien.fhmdb.models.Movie;
 import at.ac.fhcampuswien.fhmdb.models.Screen;
-import at.ac.fhcampuswien.fhmdb.models.SortedState;
+import at.ac.fhcampuswien.fhmdb.states.NoSortingState;
+import at.ac.fhcampuswien.fhmdb.states.State;
 import at.ac.fhcampuswien.fhmdb.ui.MovieCell;
 //import at.ac.fhcampuswien.fhmdb.database.WatchlistRepository;
 import com.jfoenix.controls.JFXButton;
@@ -53,7 +54,7 @@ public class HomeController implements Initializable {
 
     protected ObservableList<Movie> observableMovies = FXCollections.observableArrayList();
 
-    protected SortedState sortedState;
+    protected State sortingState;
 
     private ArrayList<String> ratingSelectionList = new ArrayList<>() {{
         add("9.0+");
@@ -83,7 +84,8 @@ public class HomeController implements Initializable {
         String url = new MovieAPIRequestBuilder(MovieAPIRequestBuilder.ALL_MOVIES_PATH).build();
         searchAPIForMovies(url);
 
-        sortedState = SortedState.NONE;
+        changeState(new NoSortingState(this));
+        sortingState.sortMovies();
     }
 
     public void initializeLayout()
@@ -122,6 +124,19 @@ public class HomeController implements Initializable {
 
     }
 
+    public ObservableList<Movie> getObservableMovies() {
+        return observableMovies;
+    }
+
+    public State getSortingState() {
+        return sortingState;
+    }
+
+    public void changeState(State state) {
+        this.sortingState = state;
+    }
+
+    /* These methods are no longer needed as the sorting functionality is now provided by the State classes
     public void sortMovies()
     {
         if (sortedState == SortedState.NONE || sortedState == SortedState.DESCENDING) {
@@ -144,6 +159,7 @@ public class HomeController implements Initializable {
             sortedState = SortedState.DESCENDING;
         }
     }
+     */
 
     public List<Movie> filterByQuery(List<Movie> movies, String query)
     {
@@ -280,18 +296,18 @@ public class HomeController implements Initializable {
 
         String url = new MovieAPIRequestBuilder(MovieAPIRequestBuilder.ALL_MOVIES_PATH)
                 .query(searchQuery)
-                .genre(genre.toString())
+                .genre(genre)
                 .releaseYear(year)
                 .ratingFrom(rating)
                 .build();
 
         searchAPIForMovies(url);
-        sortMovies(sortedState);
+        sortingState.sortMovies(); // this keeps the current sorting state after an api request
     }
 
     public void sortBtnClicked(ActionEvent actionEvent)
     {
-        sortMovies();
+        sortingState.onSortBtnClicked();
     }
 
     //Streams:
