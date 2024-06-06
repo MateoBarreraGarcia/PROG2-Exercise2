@@ -9,11 +9,19 @@ import java.util.List;
 
 public class MovieRepository {
 
+    private static MovieRepository instance;
     private Dao<MovieEntity, Long> movieDao;
 
-    public MovieRepository()
+    private MovieRepository()
     {
         this.movieDao = DatabaseManager.getInstance().getMovieDao();
+    }
+
+    public static synchronized MovieRepository getInstance() {
+        if (instance == null) {
+            instance = new MovieRepository();
+        }
+        return instance;
     }
 
     //to get all movies from the database

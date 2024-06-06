@@ -17,15 +17,23 @@ import java.util.stream.Collectors;
 
 public class WatchlistRepository {
 
+    private static WatchlistRepository instance;
     private Dao<WatchlistMovieEntity, Long> watchlistDao;
 
     /*public WatchlistRepository(ConnectionSource connectionSource) throws SQLException {
         movieDao = DaoManager.createDao(connectionSource, MovieEntity.class);
     }*/
 
-    public WatchlistRepository()
+    private WatchlistRepository()
     {
         this.watchlistDao = DatabaseManager.getInstance().getWatchlistDao();
+    }
+
+    public static WatchlistRepository getInstance() {
+        if (instance == null) {
+            instance = new WatchlistRepository();
+        }
+        return instance;
     }
 
     //to get all movies in watchlist
@@ -42,10 +50,10 @@ public class WatchlistRepository {
     public List<Movie> getWatchListMovieList() throws DatabaseException
     {
         //get all movies from database
-        List<Movie> allMovies = new MovieRepository().getAllMovies();
+        List<Movie> allMovies = MovieRepository.getInstance().getAllMovies();
         List<Movie> moviesOnWatchList = new ArrayList<>();
         try {
-            WatchlistRepository watchlistRepository = new WatchlistRepository();
+            WatchlistRepository watchlistRepository = WatchlistRepository.getInstance();
 
             //iterate through each movie entry in the watchlist
             for (WatchlistMovieEntity watchMovieEntry : watchlistRepository.getWatchList()) {

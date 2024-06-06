@@ -1,6 +1,7 @@
 package at.ac.fhcampuswien.fhmdb;
 
 import at.ac.fhcampuswien.fhmdb.models.Screen;
+import at.ac.fhcampuswien.fhmdb.factories.ControllerFactory;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Button;
@@ -22,7 +23,9 @@ public class MainController {
     Button aboutBtn;
 
     public void initialize() {
-        loadHomeView(); // when the app is started the home screen is first initialized
+
+        MainController mainController = (MainController) ControllerFactory.getInstance().call(MainController.class);
+        mainController.loadHomeView(); // when the app is started the home screen is first initialized
     }
 
     public boolean setContentView(String fxml){

@@ -12,6 +12,7 @@ import at.ac.fhcampuswien.fhmdb.models.Screen;
 import at.ac.fhcampuswien.fhmdb.states.NoSortingState;
 import at.ac.fhcampuswien.fhmdb.states.State;
 import at.ac.fhcampuswien.fhmdb.ui.MovieCell;
+import at.ac.fhcampuswien.fhmdb.factories.ControllerFactory;
 //import at.ac.fhcampuswien.fhmdb.database.WatchlistRepository;
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXComboBox;
@@ -81,11 +82,12 @@ public class HomeController implements Initializable {
 
     public void initializeState()
     {
+        HomeController homeController = (HomeController) ControllerFactory.getInstance().call(HomeController.class);
         String url = new MovieAPIRequestBuilder(MovieAPIRequestBuilder.ALL_MOVIES_PATH).build();
-        searchAPIForMovies(url);
+        homeController.searchAPIForMovies(url);
 
-        changeState(new NoSortingState(this));
-        sortingState.sortMovies();
+        homeController.changeState(new NoSortingState(this));
+        homeController.sortingState.sortMovies();
     }
 
     public void initializeLayout()
@@ -217,14 +219,14 @@ public class HomeController implements Initializable {
 
             // Fill cache only when all Movies are requested
             if(url.equals(MovieAPIRequestBuilder.ALL_MOVIES_PATH)) {
-                MovieRepository movieRepository = new MovieRepository();
+                MovieRepository movieRepository = MovieRepository.getInstance();
                 movieRepository.removeAll();
                 movieRepository.addAllMovies(movieList);
             }
         } catch (MovieApiException e) {
             // API call failed, try to load movies from the database
             try {
-                List<Movie> movieList = new MovieRepository().getAllMovies();
+                List<Movie> movieList = MovieRepository.getInstance().getAllMovies();
 
                 // Filter when API does not work
                 /* 30.5.: commented out for builder refactoring with builder pattern
@@ -352,7 +354,7 @@ public class HomeController implements Initializable {
     }
 
     private final ClickEventHandler onAddToWatchlistClicked = (clickedItem) -> {
-        WatchlistRepository watchlistRepository = new WatchlistRepository();
+        WatchlistRepository watchlistRepository = WatchlistRepository.getInstance();
         try {
             Movie movie = (Movie) clickedItem;
             watchlistRepository.addToWatchList(movie);

@@ -3,6 +3,7 @@ package at.ac.fhcampuswien.fhmdb;
 import at.ac.fhcampuswien.fhmdb.Interfaces.ClickEventHandler;
 import at.ac.fhcampuswien.fhmdb.database.WatchlistRepository;
 import at.ac.fhcampuswien.fhmdb.exceptions.DatabaseException;
+import at.ac.fhcampuswien.fhmdb.factories.ControllerFactory;
 import at.ac.fhcampuswien.fhmdb.models.Genre;
 import at.ac.fhcampuswien.fhmdb.models.Movie;
 import at.ac.fhcampuswien.fhmdb.models.Screen;
@@ -24,15 +25,17 @@ public class WatchlistController {
 
     public void initialize()
     {
-        initializeState();
-        initializeLayout();
+        WatchlistController watchlistController = (WatchlistController) ControllerFactory.getInstance().call(WatchlistController.class);
+
+        watchlistController.initializeState();
+        watchlistController.initializeLayout();
     }
 
     public void updateWatchlistScreen()
     {
         observableMovies.clear();
         try {
-            observableMovies.addAll(new WatchlistRepository().getWatchListMovieList());
+            observableMovies.addAll(WatchlistRepository.getInstance().getWatchListMovieList());
         } catch (DatabaseException e) {
             printErrorMassage(e.getMessage());
         }
@@ -41,7 +44,7 @@ public class WatchlistController {
     public void initializeState()
     {
         try {
-            observableMovies.addAll(new WatchlistRepository().getWatchListMovieList());
+            observableMovies.addAll(WatchlistRepository.getInstance().getWatchListMovieList());
         } catch (DatabaseException e) {
             printErrorMassage(e.getMessage());
         }
@@ -98,7 +101,7 @@ public class WatchlistController {
     }
 
     public final ClickEventHandler onRemoveFromWatchlistClicked = (clickedItem) -> {
-        WatchlistRepository watchlistRepository = new WatchlistRepository();
+        WatchlistRepository watchlistRepository = WatchlistRepository.getInstance();
         Movie movie = (Movie) clickedItem;
         watchlistRepository.removeFromWatchlist(movie.getId());
         updateWatchlistScreen();
