@@ -24,7 +24,7 @@ class HomeControllerTest {
     @BeforeAll
     static void init()
     {
-        homeController = new HomeController();
+        homeController = HomeController.getInstance();
         testMovieData = Arrays.asList(
                 new Movie("Interstellar",
                         "When Earth becomes uninhabitable in the future, a farmer and ex-NASA pilot, Joseph Cooper, is tasked to pilot a spacecraft, along with a team of researchers, to find a new planet for humans.",

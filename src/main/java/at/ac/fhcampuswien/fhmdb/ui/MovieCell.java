@@ -35,7 +35,7 @@ public class MovieCell extends ListCell<Movie> {
             try {
                 watchlistClicked.onClick(getItem());
             } catch (DatabaseException dbe) {
-                new HomeController().printErrorMassage(dbe.getMessage());
+                HomeController.getInstance().printErrorMassage(dbe.getMessage());
             }
         });
     }

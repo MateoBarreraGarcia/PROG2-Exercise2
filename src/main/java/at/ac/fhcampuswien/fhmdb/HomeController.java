@@ -57,8 +57,17 @@ public class HomeController implements Initializable, ObserverWatchListMovies {
 
     protected State sortingState;
 
-    public HomeController(){
+    private static HomeController instance;
+
+    private HomeController() {
         WatchlistRepository.getInstance().addObserver(this);
+    }
+
+    public static HomeController getInstance() {
+        if (instance == null) {
+            instance = new HomeController();
+        }
+        return instance;
     }
 
     private ArrayList<String> ratingSelectionList = new ArrayList<>() {{

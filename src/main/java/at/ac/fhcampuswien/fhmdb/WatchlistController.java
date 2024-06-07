@@ -23,6 +23,17 @@ public class WatchlistController {
 
     protected ObservableList<Movie> observableMovies = FXCollections.observableArrayList();
 
+    private static WatchlistController instance;
+
+    private WatchlistController() {}
+
+    public static WatchlistController getInstance() {
+        if (instance == null) {
+            instance = new WatchlistController();
+        }
+        return instance;
+    }
+
     public void initialize()
     {
         updateWatchlistScreen();
