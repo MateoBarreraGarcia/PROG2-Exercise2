@@ -1,6 +1,7 @@
 package at.ac.fhcampuswien.fhmdb;
 
 import at.ac.fhcampuswien.fhmdb.Interfaces.ClickEventHandler;
+import at.ac.fhcampuswien.fhmdb.Interfaces.ObserverWatchListMovies;
 import at.ac.fhcampuswien.fhmdb.builders.MovieAPIRequestBuilder;
 import at.ac.fhcampuswien.fhmdb.database.MovieRepository;
 import at.ac.fhcampuswien.fhmdb.database.WatchlistRepository;
@@ -22,8 +23,7 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 //import java.stream.Collectors;
 
 import java.net.URL;
@@ -31,7 +31,7 @@ import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-public class HomeController implements Initializable {
+public class HomeController implements Initializable, ObserverWatchListMovies {
     @FXML
     public JFXButton searchBtn;
 
@@ -122,7 +122,8 @@ public class HomeController implements Initializable {
 
         ratingComboBox.getItems().addAll(ratingSelectionList);
 
-
+        
+        WatchlistRepository.getInstance().addObserver(this);
     }
 
     public ObservableList<Movie> getObservableMovies() {
@@ -361,4 +362,25 @@ public class HomeController implements Initializable {
             throw new DatabaseException(cce.getMessage(), cce.getCause());
         }
     };
+
+
+    @Override
+    public void update(Movie movie, boolean success)
+    {
+        displayMassage(movie,success);
+    }
+
+    private void displayMassage(Movie movie, boolean success){
+        Dialog<String> dialog = new Dialog<>();
+        dialog.setTitle((success)?
+                "Movie added to the Watchlist"
+                :"Movie not added to the Watchlist");
+        dialog.setContentText((success)?
+                "The Movie "+movie.getTitle()+" has been added to the Watchlist."
+                : "The Movie "+movie.getTitle()+" is already in the Watchlist.");
+
+        dialog.getDialogPane().getButtonTypes().add(new ButtonType("Ok", ButtonBar.ButtonData.OK_DONE));
+
+        dialog.showAndWait();
+    }
 }

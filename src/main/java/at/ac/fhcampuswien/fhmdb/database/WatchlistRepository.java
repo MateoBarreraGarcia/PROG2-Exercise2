@@ -1,6 +1,8 @@
 package at.ac.fhcampuswien.fhmdb.database;
 
 import at.ac.fhcampuswien.fhmdb.HomeController;
+import at.ac.fhcampuswien.fhmdb.Interfaces.ObserverWatchListMovies;
+import at.ac.fhcampuswien.fhmdb.Interfaces.SubjectWatchListMovies;
 import at.ac.fhcampuswien.fhmdb.WatchlistController;
 import at.ac.fhcampuswien.fhmdb.exceptions.DatabaseException;
 import at.ac.fhcampuswien.fhmdb.models.Movie;
@@ -15,11 +17,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class WatchlistRepository {
+public class WatchlistRepository implements SubjectWatchListMovies {
 
     private static WatchlistRepository instance;
     private Dao<WatchlistMovieEntity, Long> watchlistDao;
 
+    private List<ObserverWatchListMovies> observerWatchListMovies = new ArrayList<>();
     /*public WatchlistRepository(ConnectionSource connectionSource) throws SQLException {
         movieDao = DaoManager.createDao(connectionSource, MovieEntity.class);
     }*/
@@ -75,13 +78,19 @@ public class WatchlistRepository {
         try { //check if the movie already exists in the watchlist
             // TODO: For some reason the return 0 does not get trggered when the getApiID is the same
             for (WatchlistMovieEntity movieEntety : getWatchList()) {
-                if (movieEntety.getApiID().equals(watchlistMovieEntity.getApiID())) return 0;
+                if (movieEntety.getApiID().equals(watchlistMovieEntity.getApiID())) {
+                    notifyObserver(movie, false);
+                    return 0;
+                }
             }
             //create a new entry in the watchlist for the movie
             watchlistDao.create(watchlistMovieEntity);
         } catch (SQLException sqle) {
             throw new DatabaseException(sqle.getMessage(), sqle.getCause());
         }
+
+        notifyObserver(movie, true);
+
         //return 1 to indicate successful addition
         return 1;
     }
@@ -114,5 +123,25 @@ public class WatchlistRepository {
         }
         //to return 0 if movie was not found in the watchlist
         return 0;
+    }
+
+    @Override
+    public void addObserver(ObserverWatchListMovies observerWatchListMovies)
+    {
+        this.observerWatchListMovies.add(observerWatchListMovies);
+    }
+
+    @Override
+    public void removeObserver(ObserverWatchListMovies observerWatchListMovies)
+    {
+        this.observerWatchListMovies.remove(observerWatchListMovies);
+    }
+
+    @Override
+    public void notifyObserver(Movie movie, boolean success)
+    {
+        for (ObserverWatchListMovies observerWatchListMovies : this.observerWatchListMovies){
+            observerWatchListMovies.update(movie, success);
+        }
     }
 }
