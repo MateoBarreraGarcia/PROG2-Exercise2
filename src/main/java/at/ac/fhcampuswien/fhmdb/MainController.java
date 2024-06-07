@@ -23,13 +23,12 @@ public class MainController {
     Button aboutBtn;
 
     public void initialize() {
-
-        MainController mainController = (MainController) ControllerFactory.getInstance().call(MainController.class);
-        mainController.loadHomeView(); // when the app is started the home screen is first initialized
+        loadHomeView(); // when the app is started the home screen is first initialized
     }
 
     public boolean setContentView(String fxml){
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource(fxml));
+        fxmlLoader.setControllerFactory(ControllerFactory.getInstance());
         try {
             mainPane.setCenter(fxmlLoader.load());
             return true;

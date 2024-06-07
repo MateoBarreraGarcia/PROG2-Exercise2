@@ -25,24 +25,13 @@ public class WatchlistController {
 
     public void initialize()
     {
-        WatchlistController watchlistController = (WatchlistController) ControllerFactory.getInstance().call(WatchlistController.class);
-
-        watchlistController.initializeState();
-        watchlistController.initializeLayout();
+        updateWatchlistScreen();
+        initializeLayout();
     }
 
     public void updateWatchlistScreen()
     {
         observableMovies.clear();
-        try {
-            observableMovies.addAll(WatchlistRepository.getInstance().getWatchListMovieList());
-        } catch (DatabaseException e) {
-            printErrorMassage(e.getMessage());
-        }
-    }
-
-    public void initializeState()
-    {
         try {
             observableMovies.addAll(WatchlistRepository.getInstance().getWatchListMovieList());
         } catch (DatabaseException e) {
@@ -61,6 +50,15 @@ public class WatchlistController {
                 return null;
             }
         });
+    }
+
+    public void initializeState()
+    {
+        try {
+            observableMovies.addAll(WatchlistRepository.getInstance().getWatchListMovieList());
+        } catch (DatabaseException e) {
+            printErrorMassage(e.getMessage());
+        }
     }
 
     public void printErrorMassage(String errorMassage){

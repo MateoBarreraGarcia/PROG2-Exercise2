@@ -82,12 +82,11 @@ public class HomeController implements Initializable {
 
     public void initializeState()
     {
-        HomeController homeController = (HomeController) ControllerFactory.getInstance().call(HomeController.class);
         String url = new MovieAPIRequestBuilder(MovieAPIRequestBuilder.ALL_MOVIES_PATH).build();
-        homeController.searchAPIForMovies(url);
+        searchAPIForMovies(url);
 
-        homeController.changeState(new NoSortingState(this));
-        homeController.sortingState.sortMovies();
+        changeState(new NoSortingState(this));
+        sortingState.sortMovies();
     }
 
     public void initializeLayout()
