@@ -57,6 +57,10 @@ public class HomeController implements Initializable, ObserverWatchListMovies {
 
     protected State sortingState;
 
+    public HomeController(){
+        WatchlistRepository.getInstance().addObserver(this);
+    }
+
     private ArrayList<String> ratingSelectionList = new ArrayList<>() {{
         add("9.0+");
         add("8.0+");
@@ -121,9 +125,6 @@ public class HomeController implements Initializable, ObserverWatchListMovies {
 
 
         ratingComboBox.getItems().addAll(ratingSelectionList);
-
-        
-        WatchlistRepository.getInstance().addObserver(this);
     }
 
     public ObservableList<Movie> getObservableMovies() {
